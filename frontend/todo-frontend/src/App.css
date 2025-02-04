@@ -1,0 +1,9 @@
+body{
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  font-family: "Nunito", serif;
+  font-optical-sizing: auto;
+  font-weight: bold;
+  font-style: normal;
+}
