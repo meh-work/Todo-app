@@ -3,7 +3,6 @@ import todoModel from "../models/TodoModel.js";
 
 export const createTodo = async (req, res) => {
     const { task,  } = req.body;
-    console.log("Task: ",req.body)
     try {
       const imagePath = req.file ? `uploads/${req.file.filename}` : null;
       const newTodo = new todoModel({
