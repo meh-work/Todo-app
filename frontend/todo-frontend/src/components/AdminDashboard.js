@@ -55,6 +55,7 @@ const AdminDashboard = () => {
                     </tr>
                 </thead>
                 <tbody>
+                {console.log("Todos: ",todos)}
                     {todos.length > 0 ? (
                         todos.map((todo) => (
                             <tr key={todo._id}>

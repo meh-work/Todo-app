@@ -23,28 +23,33 @@ export const getTodosForAdmin = async (req, res) => {
       const { page = 1, limit = 10 } = req.query;
       const skip = (page - 1) * limit;
 
-      const todos = await todoModel
-          .find({ task: { $ne: "undefined" } })
-          .populate("user", "username")
-          .skip(skip)
-          .limit(Number(limit));
+      // Fetch Todos using populate: 
+      // const todos = await todoModel
+      //     .find({ task: { $ne: "undefined" } })
+      //     .populate('userId')
+      //     .skip(skip)
+      //     .limit(Number(limit));
+      // Fetch Todos using aggregation: 
+      const todos = await todoModel.aggregate([
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'userId',
+            foreignField: '_id',
+            as: 'userDetails'
+          }
+        }
+      ])
 
+      console.log("Todos: ",todos)
       const total = await todoModel.countDocuments({ task: { $ne: "undefined" } });
-
-      const userIds = [...new Set(todos.map(todo => todo.userId))];
-
-      const users = await userModel.find({ _id: { $in: userIds } }, "username").lean();
-  
-      const userMap = users.reduce((acc, user) => {
-        acc[user._id] = user.username;
-        return acc;
-      }, {});
-
       const formattedTodos = todos.map(todo => ({
           _id: todo._id,
-          username: userMap[todo.userId] || "Unknown",
+          username: todo.userDetails[0].username || "Unknown",
           task: todo.task,
           image: todo.image || null,
+          isDeleted: todo.isDeleted,
+          isCompleted: todo.isDeleted
       }));
 
       res.status(200).json({ todos: formattedTodos, total });
