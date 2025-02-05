@@ -2,17 +2,17 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 
-const Login = () => {
-  const [formData, setFormData] = useState({ username: "", password: "" });
+const AdminLogin = () => {
+  const [formData, setFormData] = useState({ adminname: "", password: "" });
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Username: ", formData.username);  // Log username to console
+    console.log("AdminName: ", formData.adminname);  // Log adminname to console
     console.log("Password: ", formData.password);  // Log password to console
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/api/users/login", 
+        "http://localhost:5000/api/admin/login", 
         formData,
         {
             headers: {
@@ -23,7 +23,7 @@ const Login = () => {
       console.log("Data: ", data);  // Log response data to console
       localStorage.setItem("token", data.token);
       alert("Login Successful!");
-      navigate("/dashboard");
+      navigate("/admin-dashboard");
     } catch (error) {
       console.log("Error: ", error);  // Log error to console
       alert(error.response?.data?.message || error.message || "Login Failed");
@@ -32,15 +32,15 @@ const Login = () => {
 
   return (
     <div className="dashboard-container">
-        <div className="dashboard-header"><h2>Login</h2></div>
+        <div className="dashboard-header"><h2>Admin Login</h2></div>
       <form onSubmit={handleSubmit} method="post">
         <input
           type="text"
-          name="username"
+          name="adminname"
           placeholder="Username"
-          value={formData.username} // Added value for controlled input
+          value={formData.adminname} // Added value for controlled input
           onChange={(e) =>
-            setFormData({ ...formData, username: e.target.value })
+            setFormData({ ...formData, adminname: e.target.value })
           }
         />
         <input
@@ -54,14 +54,11 @@ const Login = () => {
         />
         <button type="submit">Login</button>
       </form>
-      <p>
-        Don't have an account? <Link to="/register">Register here</Link>
-      </p>
-      <p>
-        Does an admin wants to login? <Link to="/admin-login">Login here</Link>
-      </p>
+        <p>
+          Not an admin? Login as user here. <Link to="/">Login here</Link>
+        </p>
     </div>
   );
 };
 
-export default Login;
+export default AdminLogin;

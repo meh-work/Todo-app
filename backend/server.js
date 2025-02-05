@@ -15,7 +15,9 @@ app.use("/uploads", express.static("uploads"));
 import userRoutes from "./routes/userRoutes.js"
 app.use('/api/users',userRoutes);
 import todoRoutes from "./routes/todoRoutes.js"
-app.use('/api/todos',todoRoutes)
+app.use('/api/todos',todoRoutes);
+import adminRoutes from "./routes/adminRoutes.js"
+app.use('/api/admin',adminRoutes);
 
 const PORT = process.env.PORT || 5000;
 

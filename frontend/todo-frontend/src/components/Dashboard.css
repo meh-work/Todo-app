@@ -67,6 +67,16 @@
   .todo-task {
     flex-grow: 1;
   }
+
+  .todo-image{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    height: 200px;
+    width: 300px;
+    padding: 5px;
+    margin: 5px;
+  }
   
   .todo-task.completed {
     text-decoration: line-through;

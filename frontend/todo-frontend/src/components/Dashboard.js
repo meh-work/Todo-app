@@ -7,6 +7,7 @@ const Dashboard = () => {
   const [todos, setTodos] = useState([]);
   const [newTask, setNewTask] = useState("");
   const [image, setImage] = useState(null)
+  const [imagePreview, setImagePreview] = useState(null);
   const navigate = useNavigate();
 
   // Fetch todos from the backend
@@ -55,9 +56,25 @@ const Dashboard = () => {
       console.log("Response: ",response)
       setTodos([...todos, response.data]); // Add the new todo to the list
       setNewTask("");
+      setImage(null)
+      setImagePreview(null)
     } catch (error) {
       console.error("Error adding todo:", error);
       alert("Error adding todo");
+    }
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
+
+    // Create an image preview
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);  // Set image preview URL
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -133,8 +150,17 @@ const Dashboard = () => {
         <input
           type="file"
           accept="image/*"
-          onChange={(e) => setImage(e.target.files[0])}
+          onChange={handleImageChange}
         />
+        {imagePreview && (
+          <div className="image-preview">
+            <img
+              src={imagePreview}
+              alt="Preview"
+              style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '8px' }}
+            />
+          </div>
+        )}
         <button className="add-task-button" onClick={handleAddTodo}>Add Task</button>
       </div>
       <div className="todo-list-container">
@@ -203,6 +229,11 @@ const Dashboard = () => {
                   }}
                 >
                   ✕
+                </button>
+                <button 
+                  onClick={() => navigate(`/edit-todo/${todo._id}`, {state: {todo}})}
+                >
+                  Edit Todo
                 </button>
               </li>
             ))}
