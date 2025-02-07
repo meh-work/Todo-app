@@ -1,23 +1,20 @@
-import { apiRequestBackend } from "../../../services/api";
-import { userDashboardFrontend, userLoginBackend, userLoginFrontend } from "../../../routes/routes";
+import { userDashboardFrontendRoute, userLoginFrontendRoute, userLoginRoute } from "../../../routes/routes";
 
 export const login = (formData, navigate) => async (dispatch) => {
   try {
-    const endpoint = userLoginBackend
-    const data = await apiRequestBackend("POST", endpoint, formData)
-
-    dispatch({ type: "LOGIN_SUCCESS", payload: data.token });
+    const data = userLoginRoute(formData);
+    dispatch({ type: "USER_LOGIN_SUCCESS", payload: data.token });
     localStorage.setItem("token", data.token);
     alert("Login Successful!");
-    navigate(userDashboardFrontend);
+    navigate(userDashboardFrontendRoute);
   } catch (error) {
     alert(error.response?.data?.message || "Login Failed");
-    dispatch({ type: "LOGIN_FAILURE" });
+    dispatch({ type: "USER_LOGIN_FAILURE" });
   }
 };
 
 export const logout = (navigate) => (dispatch) => {
   localStorage.removeItem("token");
-  dispatch({ type: "LOGOUT" });
-  navigate(userLoginFrontend);
+  dispatch({ type: "USER_LOGOUT" });
+  navigate(userLoginFrontendRoute);
 };

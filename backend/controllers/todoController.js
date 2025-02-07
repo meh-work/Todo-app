@@ -41,7 +41,7 @@ export const getTodosForAdmin = async (req, res) => {
         }
       ])
 
-      console.log("Todos: ",todos)
+      // console.log("Todos: ",todos)
       const total = await todoModel.countDocuments({ task: { $ne: "undefined" } });
       const formattedTodos = todos.map(todo => ({
           _id: todo._id,

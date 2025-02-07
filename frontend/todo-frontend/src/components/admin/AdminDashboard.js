@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { fetchTodos } from "../../redux/actions/admin/todoActions";
-import { login, logout } from "../../redux/actions/admin/authActions";
-import "./AdminDashboard.css";
+import { fetchTodos } from "../../redux/actions/adminActions/todoActions";
+import { login, logout } from "../../redux/actions/adminActions/authActions";
+import "../../styles/AdminDashboard.css";
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();

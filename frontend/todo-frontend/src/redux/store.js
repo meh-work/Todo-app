@@ -6,6 +6,7 @@ import { authReducer } from "../redux/reducers/adminReducers/authReducer";
 import { todoReducer } from "../redux/reducers/adminReducers/todoReducer";
 import { logger } from "redux-logger";
 import { userAuthReducer } from "../redux/reducers/userReducers/userAuthReducer";
+import { userTodoReducer } from "./actions/userActions/userTodoActions";
 
 // Persist Config
 const persistConfig = {
@@ -24,6 +25,7 @@ export const store = configureStore({
     auth: persistedAuthReducer,
     userAuth: userPersistedAuthReducer,
     todos: todoReducer,
+    userTodos: userTodoReducer
   },
   middleware: [thunk, logger],
   devTools: process.env.NODE_ENV !== "production",

@@ -1,12 +1,12 @@
-import axios from "axios";
+import { userLoginFrontendRoute, userRegisterRoute } from "../../../routes/routes";
 
 export const register = (formData, navigate) => async (dispatch) => {
     
     try {
-        const {data} = await axios.post("http://localhost:5000/api/users/register",formData)
+        const data = userRegisterRoute(formData)
         dispatch({ type: "REGISTER_SUCCESS"});
         alert(data.message || "Registration Successful!");
-        navigate("/");
+        navigate(userLoginFrontendRoute);
     } catch (error) {
         console.log("Error: ",error)
         alert(error.response?.data?.message || error.message || "Registration Failed");

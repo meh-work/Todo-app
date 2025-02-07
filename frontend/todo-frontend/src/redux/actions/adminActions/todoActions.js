@@ -1,9 +1,8 @@
-import { apiRequestBackend } from "../../../services/api";
-import { adminDashboardBackend } from "../../../routes/routes";
+import { adminFetchTodosRoute } from "../../../routes/routes";
 
 export const fetchTodos = (page, token) => async (dispatch) => {
   try {
-    const response = await apiRequestBackend("GET", `${adminDashboardBackend}?page=${page}&limit=10`, token);
+    const response = adminFetchTodosRoute(page,token)
     dispatch(todoReducer(response))
   } catch (error) {
     dispatch({ type: "FETCH_TODOS_FAILURE" });

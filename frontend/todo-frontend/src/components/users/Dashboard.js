@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import '../../styles/Dashboard.css'
-import { userLoginFrontend } from "../../routes/routes";
+import { userLoginFrontendRoute } from "../../routes/routes";
+import { useDispatch, useSelector } from "react-redux";
+import { login, logout } from "../../redux/actions/userActions/userAuthActions";
+import { userFetchTodos } from "../../redux/actions/userActions/userTodoActions";
 
 const Dashboard = () => {
   const [todos, setTodos] = useState([]);
@@ -10,31 +13,17 @@ const Dashboard = () => {
   const [image, setImage] = useState(null)
   const [imagePreview, setImagePreview] = useState(null);
   const navigate = useNavigate();
-
-  // Fetch todos from the backend
-  const fetchTodos = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        navigate("/"); // Redirect to login if no token found
-        return;
-      }
-
-      const response = await axios.get("http://localhost:5000/api/todos", {
-        headers: {
-          "Authorization": `Bearer ${token}`,
-        },
-      });
-      setTodos(response.data); // Store todos in state
-    } catch (error) {
-      console.error("Error fetching todos:", error);
-      alert("Error fetching todos");
-    }
-  };
+  const dispatch = useDispatch()
+  const token = useSelector((state) => state.auth.token);
 
   useEffect(() => {
-    fetchTodos(); // Fetch todos when component mounts
-  });
+    if(!token){
+      dispatch({type: "USER_LOGIN_FAILURE"})
+      dispatch(login(navigate))
+      return;
+    }
+    dispatch(userFetchTodos(token))
+  },[dispatch,token,navigate]);
 
   const handleAddTodo = async () => {
     try {
@@ -83,7 +72,7 @@ const Dashboard = () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        navigate(userLoginFrontend); // Redirect to login if no token found
+        navigate(userLoginFrontendRoute); // Redirect to login if no token found
         return;
       }
 
@@ -131,14 +120,9 @@ const Dashboard = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate(userLoginFrontend);
-  }
-
   return (
     <div className="dashboard-container">
-      <button className="logout" onClick={handleLogout}>Logout</button>
+      <button className="logout" onClick={() => dispatch(logout(navigate))}>Logout</button>
       <h2 className="dashboard-header">Welcome to Your Dashboard</h2>
       <div className="task-input-container">
         <input
