@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate,Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { register } from "../../redux/actions/registerAction";
+import { register } from "../../redux/actions/userActions/registerAction";
 
 const Register = () => {
   const [formData, setFormData] = useState({ username: "", password: "" });

@@ -2,10 +2,10 @@ import { configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import thunk from "redux-thunk";
-import { authReducer } from "./reducers/adminReducers/authReducer";
-import { todoReducer } from "./reducers/adminReducers/todoReducer";
+import { authReducer } from "../redux/reducers/adminReducers/authReducer";
+import { todoReducer } from "../redux/reducers/adminReducers/todoReducer";
 import { logger } from "redux-logger";
-import { userAuthReducer } from "./reducers/userAuthReducer";
+import { userAuthReducer } from "../redux/reducers/userReducers/userAuthReducer";
 
 // Persist Config
 const persistConfig = {
