@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import './Dashboard.css'
+import { userLoginFrontend } from "../routes";
 
 const Dashboard = () => {
   const [todos, setTodos] = useState([]);
@@ -82,7 +83,7 @@ const Dashboard = () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        navigate("/login"); // Redirect to login if no token found
+        navigate(userLoginFrontend); // Redirect to login if no token found
         return;
       }
 
@@ -132,7 +133,7 @@ const Dashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate('/');
+    navigate(userLoginFrontend);
   }
 
   return (

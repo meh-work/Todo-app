@@ -1,13 +1,15 @@
-import axios from "axios";
+import { apiRequestBackend } from "../../api";
+import { userDashboardFrontend, userLoginBackend, userLoginFrontend } from "../../routes";
 
 export const login = (formData, navigate) => async (dispatch) => {
   try {
-    const { data } = await axios.post("http://localhost:5000/api/users/login", formData);
-    
+    const endpoint = userLoginBackend
+    const data = await apiRequestBackend("POST", endpoint, formData)
+
     dispatch({ type: "LOGIN_SUCCESS", payload: data.token });
     localStorage.setItem("token", data.token);
     alert("Login Successful!");
-    navigate("/dashboard");
+    navigate(userDashboardFrontend);
   } catch (error) {
     alert(error.response?.data?.message || "Login Failed");
     dispatch({ type: "LOGIN_FAILURE" });
@@ -17,5 +19,5 @@ export const login = (formData, navigate) => async (dispatch) => {
 export const logout = (navigate) => (dispatch) => {
   localStorage.removeItem("token");
   dispatch({ type: "LOGOUT" });
-  navigate("/");
+  navigate(userLoginFrontend);
 };
