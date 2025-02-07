@@ -1,8 +1,25 @@
 import axios from "axios";
+import { backendBaseUrl } from "../src/baseUrl.js"
 
 const api = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: backendBaseUrl,
 });
+
+export const apiRequestBackend = async (method, url , data = null, token = null) => {
+  try {
+    const authToken = token || localStorage.getItem("token");
+    const config = {
+      method,
+      url,
+      data,
+      headers: token ? { Authorization: `Bearer ${authToken}`} : {}
+    }
+    const response = await api(config);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Something went wrong!"
+  }
+}
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");

@@ -1,21 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate,Link } from "react-router-dom";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { register } from "../redux/actions/registerAction";
 
 const Register = () => {
   const [formData, setFormData] = useState({ username: "", password: "" });
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const { data } = await axios.post("http://localhost:5000/api/users/register", formData);
-      alert(data.message || "Registration Successful!");
-      navigate("/"); // Redirect to login page after successful registration
-    } catch (error) {
-        console.log("Error: ",error)
-        alert(error.response?.data?.message || error.message || "Registration Failed");
-    }
+    dispatch(register(formData,navigate))
   };
 
   return (

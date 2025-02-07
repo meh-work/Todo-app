@@ -11,12 +11,12 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-      <Route path="/" element={<Login />} />
-      <Route path="/admin-login" element={<AdminLogin/>} />
-      <Route path="/admin-dashboard" element={<AdminDashboard/>} />
-      <Route path="/edit-todo/:id" element={<EditTodo/>}/>
-      <Route path="/register" element={<Register />} />
-      <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/admin-login" element={<AdminLogin/>} />
+        <Route path="/admin-dashboard" element={<AdminDashboard/>} />
+        <Route path="/edit-todo/:id" element={<EditTodo/>}/>
+        <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,0 +1,6 @@
+export const userLogin = "/users/login"
+export const userRegister = "/users/register"
+export const adminLoginBackend = "admin/login"
+export const adminLoginFrontend = "/admin-login"
+export const adminDashboardBackend = "/todos/admin"
+export const adminDashboardFrontend = "/admin-dashboard"
