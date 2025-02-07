@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate,Link } from "react-router-dom";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { register } from "../redux/actions/registerAction";
+import { register } from "../../redux/actions/registerAction";
 
 const Register = () => {
   const [formData, setFormData] = useState({ username: "", password: "" });

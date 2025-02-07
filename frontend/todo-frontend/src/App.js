@@ -1,11 +1,11 @@
 import './App.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Login from './components/Login';
-import Register from './components/Register';
-import Dashboard from './components/Dashboard';
-import EditTodo from './components/EditTodo';
-import AdminLogin from './components/AdminLogin';
-import AdminDashboard from './components/AdminDashboard';
+import Login from './components/users/Login';
+import Register from './components/users/Register';
+import Dashboard from './components/users/Dashboard';
+import EditTodo from './components/users/EditTodo';
+import AdminLogin from './components/admin/AdminLogin';
+import AdminDashboard from './components/admin/AdminDashboard';
 
 function App() {
   return (
