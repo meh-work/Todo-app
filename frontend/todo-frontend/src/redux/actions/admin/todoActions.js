@@ -1,5 +1,5 @@
-import { apiRequestBackend } from "../../services/api";
-import { adminDashboardBackend } from "../../routes/routes";
+import { apiRequestBackend } from "../../../services/api";
+import { adminDashboardBackend } from "../../../routes/routes";
 
 export const fetchTodos = (page, token) => async (dispatch) => {
   try {
