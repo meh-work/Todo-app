@@ -1,55 +1,50 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import '../../styles/Dashboard.css'
+import "../../styles/Dashboard.css";
 import { userLoginFrontendRoute } from "../../routes/routes";
 import { useDispatch, useSelector } from "react-redux";
 import { login, logout } from "../../redux/actions/userActions/userAuthActions";
 import { userFetchTodos } from "../../redux/actions/userActions/userTodoActions";
 
 const Dashboard = () => {
-  const [todos, setTodos] = useState([]);
-  const userTodos = useSelector((state) => state.userTodos.userTodos.todos)
   const [newTask, setNewTask] = useState("");
-  const [image, setImage] = useState(null)
+  const [image, setImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
+  const userTodos = useSelector((state) => state.userTodos.userTodos.todos) || [];
 
-  useEffect(() => {    
-    if(!token){
-      dispatch({type: "USER_LOGIN_FAILURE"})
-      dispatch(login(navigate))
+  useEffect(() => {
+    if (!token) {
+      dispatch({ type: "USER_LOGIN_FAILURE" });
+      dispatch(login(navigate));
       return;
     }
-    console.log("User todos: ",userTodos);
-    
-    dispatch(userFetchTodos(token))
-  },[dispatch,token,navigate,userTodos]);
+    dispatch(userFetchTodos(token));
+  }, [dispatch, token, navigate]);
 
   const handleAddTodo = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        navigate("/login"); // Redirect to login if no token found
-        return;
-      }
+    if (!token) {
+      navigate("/login");
+      return;
+    }
 
-      const response = await axios.post(
-        "http://localhost:5000/api/todos",
-        { task: newTask, image: image},
-        {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      setTodos([...todos, response.data]); // Add the new todo to the list
+    try {
+      const formData = new FormData();
+      formData.append("task", newTask);
+      if (image) formData.append("image", image);
+
+      await axios.post("http://localhost:5000/api/todos", formData, {
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
+      });
+
       setNewTask("");
-      setImage(null)
-      setImagePreview(null)
+      setImage(null);
+      setImagePreview(null);
+      dispatch(userFetchTodos(token)); // Refetch todos after adding
     } catch (error) {
       console.error("Error adding todo:", error);
       alert("Error adding todo");
@@ -59,31 +54,25 @@ const Dashboard = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setImage(file);
-
-    // Create an image preview
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);  // Set image preview URL
-      };
+      reader.onloadend = () => setImagePreview(reader.result);
       reader.readAsDataURL(file);
     }
   };
 
   const handleDeleteTodo = async (id) => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        navigate(userLoginFrontendRoute); // Redirect to login if no token found
-        return;
-      }
+    if (!token) {
+      navigate(userLoginFrontendRoute);
+      return;
+    }
 
+    try {
       await axios.delete(`http://localhost:5000/api/todos/${id}`, {
-        headers: {
-          "Authorization": `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-      setTodos(todos.filter(todo => todo._id !== id)); // Remove the deleted todo from state
+
+      dispatch(userFetchTodos(token)); // Refetch todos after deletion
     } catch (error) {
       console.error("Error deleting todo:", error);
       alert("Error deleting todo");
@@ -91,31 +80,19 @@ const Dashboard = () => {
   };
 
   const handleUpdateTodo = async (id, task, isCompleted) => {
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        navigate("/login"); // Redirect to login if no token found
-        return;
-      }
-
-      const updatedTodo = {
-        task,
-        isCompleted: !isCompleted,
-      };
-
-      const response = await axios.put(
+      await axios.put(
         `http://localhost:5000/api/todos/${id}`,
-        updatedTodo,
-        {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
+        { task, isCompleted: !isCompleted },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // Update the todos list with the updated todo
-      setTodos(todos.map(todo => (todo._id === id ? response.data : todo)));
+      dispatch(userFetchTodos(token)); // Refetch todos after update
     } catch (error) {
       console.error("Error updating todo:", error);
       alert("Error updating todo");
@@ -124,117 +101,69 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
-      <button className="logout" onClick={() => dispatch(logout(navigate))}>Logout</button>
+      <button className="logout" onClick={() => dispatch(logout(navigate))}>
+        Logout
+      </button>
       <h2 className="dashboard-header">Welcome to Your Dashboard</h2>
+
       <div className="task-input-container">
-        <input
-          className="task-input"
-          type="text"
-          placeholder="Add new task"
-          value={newTask}
-          onChange={(e) => setNewTask(e.target.value)}
-        />
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleImageChange}
-        />
-        {imagePreview && (
-          <div className="image-preview">
-            <img
-              src={imagePreview}
-              alt="Preview"
-              style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '8px' }}
-            />
-          </div>
-        )}
-        <button className="add-task-button" onClick={handleAddTodo}>Add Task</button>
+        <input type="text" placeholder="Add new task" value={newTask} onChange={(e) => setNewTask(e.target.value)} />
+        <input type="file" accept="image/*" onChange={handleImageChange} />
+        {imagePreview && <img src={imagePreview} alt="Preview" className="image-preview" />}
+        <button onClick={handleAddTodo}>Add Task</button>
       </div>
+
       <div className="todo-list-container">
         <h3>Your Todo List</h3>
-        {userTodos?.length > 0 ? (
-          <ul 
-            style={{
-              listStyleType: 'none', 
-              padding: 0, 
-              margin: 0, 
-              display: 'flex', 
-              flexDirection: 'column', 
-              gap: '10px'
-            }}
-          >
-            {userTodos.map((todo) => (
-              <li 
-                key={todo._id} 
-                style={{
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'space-between',
-                  backgroundColor: '#f8f9fa',
-                  padding: '10px',
-                  borderRadius: '8px',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                }}
-              >
-                <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
-                  <input
-                    className="todo-checkbox"
-                    type="checkbox"
-                    checked={todo.isCompleted}
-                    onChange={() => handleUpdateTodo(todo._id, todo.task, todo.isCompleted)}
-                    style={{
-                      accentColor: '#4a90e2',
-                      cursor: 'pointer'
-                    }}
-                  />
-                  <span 
-                    style={{
-                      textDecoration: todo.isCompleted ? 'line-through' : 'none',
-                      color: todo.isCompleted ? '#6c757d' : '#333',
-                      flex: 1
-                    }}
-                  >
-                    {todo.task}
-                  </span>
-                </div>
-                {todo.image && (
-                  <img
-                    src={`http://localhost:5000/${todo.image}`}
-                    alt="Task"
-                    className="todo-image"
-                  />
-                )}
-                <button 
-                  onClick={() => handleDeleteTodo(todo._id)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#dc3545',
-                    cursor: 'pointer',
-                    fontSize: '16px',
-                    marginLeft: '10px'
-                  }}
-                >
-                  ✕
-                </button>
-                <button 
-                  onClick={() => navigate(`/edit-todo/${todo._id}`, {state: {todo}})}
-                >
-                  Edit Todo
-                </button>
-              </li>
-            ))}
-          </ul>
+        {userTodos.length > 0 ? (
+          <table className="todo-table">
+            <thead>
+              <tr>
+                <th>Task</th>
+                <th>Completed</th>
+                <th>Image</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {userTodos.map((todo) => (
+                <tr key={todo._id}>
+                  <td>{todo.task}</td>
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={todo.isCompleted}
+                      onChange={() => handleUpdateTodo(todo._id, todo.task, todo.isCompleted)}
+                    />
+                  </td>
+                  <td>
+                    {todo.image ? (
+                      <button onClick={() => setSelectedImage(`http://localhost:5000/${todo.image}`)}>View Image</button>
+                    ) : (
+                      "No Image"
+                    )}
+                  </td>
+                  <td>
+                    <button onClick={() => navigate(`/edit-todo/${todo._id}`, { state: { todo } })}>Edit</button>
+                    <button onClick={() => handleDeleteTodo(todo._id)}>Delete</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         ) : (
-          <p style={{
-            textAlign: 'center', 
-            color: '#6c757d', 
-            fontStyle: 'italic'
-          }}>
-            No tasks found
-          </p>
+          <p>No tasks found</p>
         )}
       </div>
+
+      {selectedImage && (
+        <div className="image-preview-overlay" onClick={() => setSelectedImage(null)}>
+          <div className="image-preview">
+            <img src={selectedImage} alt="Task Preview" />
+            <button onClick={() => setSelectedImage(null)}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
