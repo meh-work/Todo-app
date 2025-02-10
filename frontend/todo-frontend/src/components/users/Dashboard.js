@@ -128,7 +128,9 @@ const Dashboard = () => {
             <tbody>
               {userTodos.map((todo) => (
                 <tr key={todo._id}>
-                  <td>{todo.task}</td>
+                  <td title={todo.task}>
+                    {todo.task.length > 10 ? todo.task.substring(0, 10) + "..." : todo.task}
+                  </td>
                   <td>
                     <input
                       type="checkbox"
@@ -144,7 +146,7 @@ const Dashboard = () => {
                     )}
                   </td>
                   <td>
-                    <button onClick={() => navigate(`/edit-todo/${todo._id}`, { state: { todo } })}>Edit</button>
+                    <button className="todo-task-button" onClick={() => navigate(`/edit-todo/${todo._id}`, { state: { todo } })}>Edit</button>
                     <button onClick={() => handleDeleteTodo(todo._id)}>Delete</button>
                   </td>
                 </tr>
