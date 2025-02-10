@@ -1,21 +1,16 @@
 import todoModel from "../models/TodoModel.js";
-import userModel from "../models/UserModel.js"
+import { addTodos,editTodos,fetchUserTodos, removeTodos } from "../services/todos/manageTodos.js";
 
 
 export const createTodo = async (req, res) => {
     const { task  } = req.body;
-    try {
-      const imagePath = req.file ? `uploads/${req.file.filename}` : null;
-      const newTodo = new todoModel({
-        userId: req.user.id,
-        task,
-        image: imagePath
-      });
-      await newTodo.save();
-      res.status(201).json(newTodo);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+    const imagePath = req.file ? `uploads/${req.file.filename}` : null;
+    const userId = req.user.id
+    const result = await addTodos(imagePath,userId, task);
+    if (result.error) {
+      return res.status(result.status).json({ message: result.error });
     }
+    res.status(result.status).json({ error: result.error });
 };
 
 export const getTodosForAdmin = async (req, res) => {
@@ -62,44 +57,34 @@ export const getTodosForAdmin = async (req, res) => {
 };
 
 export const getTodos = async (req, res) => {
-  try {
-    const todos = await todoModel.find({ userId: req.user.id, isDeleted: false });
-    res.status(200).json({todos});
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  const userId = req.user.id
+  const result = await fetchUserTodos(userId);
+  
+  if (result.error) {
+    return res.status(result.status).json({ message: result.error });
   }
+  res.status(result.status).json({ todos: result.todos });
 };
 
 export const updateTodo = async (req, res) => {
   const { id } = req.params;
   const { task, isCompleted } = req.body;
-  try {
-    const imagePath = req.file ? `uploads/${req.file.filename}` : null;
-    const updateData = { task, isCompleted };
-    
-    if (imagePath) {
-      updateData.image = imagePath;
-    }
+  const imagePath = req.file ? `uploads/${req.file.filename}` : null;
+  const result = await editTodos(id,task,isCompleted,imagePath);
 
-    const updatedTodo = await todoModel.findByIdAndUpdate(id, updateData, { new: true });
-
-    res.status(200).json(updatedTodo);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  if(result.error) {
+    return res.status(result.status).json({ message: result.error });
   }
+  res.status(result.status).json({ message: result.error })
 };
 
 
 export const deleteTodo = async (req, res) => {
   const { id } = req.params;
-  try {
-    const deleteTodo = await todoModel.findByIdAndUpdate(
-      id,
-      {isDeleted: true},
-      {new: true}
-    )
-    res.status(200).json(deleteTodo);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+
+  const result = await removeTodos(id);
+  if(result.error) {
+    return res.status(result.status).json({ message: result.error });
   }
+  res.status(result.status).json({ message: result.error })
 };
