@@ -18,6 +18,8 @@ export const adminLoginRoute = async (formData) => {
 
 export const adminFetchTodosRoute = async (page,token) => {
     const response = await apiRequestBackend("GET", `${adminDashboardBackendRoute}?page=${page}&limit=10`, token);
+    console.log("Admin todo resp: ",response);
+    
     return response;
 }
 
@@ -32,6 +34,8 @@ export const userLoginRoute = async (formData) => {
 }
 
 export const userFetchTodosRoute = async (token) => {
-    const response = apiRequestBackend("GET", userDashboardBackendRoute,token);
+    const response = await apiRequestBackend("GET", userDashboardBackendRoute,token);
+    console.log("User response: ",response);
+    
     return response;
 }

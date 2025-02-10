@@ -9,6 +9,7 @@ import { userFetchTodos } from "../../redux/actions/userActions/userTodoActions"
 
 const Dashboard = () => {
   const [todos, setTodos] = useState([]);
+  const userTodos = useSelector((state) => state.userTodos.userTodos.todos)
   const [newTask, setNewTask] = useState("");
   const [image, setImage] = useState(null)
   const [imagePreview, setImagePreview] = useState(null);
@@ -16,14 +17,16 @@ const Dashboard = () => {
   const dispatch = useDispatch()
   const token = useSelector((state) => state.auth.token);
 
-  useEffect(() => {
+  useEffect(() => {    
     if(!token){
       dispatch({type: "USER_LOGIN_FAILURE"})
       dispatch(login(navigate))
       return;
     }
+    console.log("User todos: ",userTodos);
+    
     dispatch(userFetchTodos(token))
-  },[dispatch,token,navigate]);
+  },[dispatch,token,navigate,userTodos]);
 
   const handleAddTodo = async () => {
     try {
@@ -43,7 +46,6 @@ const Dashboard = () => {
           },
         }
       );
-      console.log("Response: ",response)
       setTodos([...todos, response.data]); // Add the new todo to the list
       setNewTask("");
       setImage(null)
@@ -150,7 +152,7 @@ const Dashboard = () => {
       </div>
       <div className="todo-list-container">
         <h3>Your Todo List</h3>
-        {todos.length > 0 ? (
+        {userTodos?.length > 0 ? (
           <ul 
             style={{
               listStyleType: 'none', 
@@ -161,7 +163,7 @@ const Dashboard = () => {
               gap: '10px'
             }}
           >
-            {todos.map((todo) => (
+            {userTodos.map((todo) => (
               <li 
                 key={todo._id} 
                 style={{

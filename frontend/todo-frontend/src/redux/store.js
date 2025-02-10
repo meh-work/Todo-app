@@ -5,8 +5,7 @@ import thunk from "redux-thunk";
 import { authReducer } from "../redux/reducers/adminReducers/authReducer";
 import { todoReducer } from "../redux/reducers/adminReducers/todoReducer";
 import { logger } from "redux-logger";
-import { userAuthReducer } from "../redux/reducers/userReducers/userAuthReducer";
-import { userTodoReducer } from "./actions/userActions/userTodoActions";
+import { userTodoReducer } from "./reducers/userReducers/userTodoReducer";
 
 // Persist Config
 const persistConfig = {
@@ -17,13 +16,11 @@ const persistConfig = {
 
 // Apply persistReducer to authReducer
 const persistedAuthReducer = persistReducer(persistConfig, authReducer);
-const userPersistedAuthReducer = persistReducer(persistConfig, userAuthReducer);
 
 // Configure Store
 export const store = configureStore({
   reducer: {
     auth: persistedAuthReducer,
-    userAuth: userPersistedAuthReducer,
     todos: todoReducer,
     userTodos: userTodoReducer
   },

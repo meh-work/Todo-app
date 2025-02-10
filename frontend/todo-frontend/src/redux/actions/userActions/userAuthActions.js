@@ -2,7 +2,7 @@ import { userDashboardFrontendRoute, userLoginFrontendRoute, userLoginRoute } fr
 
 export const login = (formData, navigate) => async (dispatch) => {
   try {
-    const data = userLoginRoute(formData);
+    const data = await userLoginRoute(formData);
     dispatch({ type: "USER_LOGIN_SUCCESS", payload: data.token });
     localStorage.setItem("token", data.token);
     alert("Login Successful!");
@@ -13,8 +13,7 @@ export const login = (formData, navigate) => async (dispatch) => {
   }
 };
 
-export const logout = (navigate) => (dispatch) => {
+export const logout = (navigate) => () => {
   localStorage.removeItem("token");
-  dispatch({ type: "USER_LOGOUT" });
   navigate(userLoginFrontendRoute);
 };

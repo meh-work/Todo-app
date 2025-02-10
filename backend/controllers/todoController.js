@@ -24,28 +24,29 @@ export const getTodosForAdmin = async (req, res) => {
       const skip = (page - 1) * limit;
 
       // Fetch Todos using populate: 
-      // const todos = await todoModel
-      //     .find({ task: { $ne: "undefined" } })
-      //     .populate('userId')
-      //     .skip(skip)
-      //     .limit(Number(limit));
+      const todos = await todoModel
+          .find({ task: { $ne: "undefined" } })
+          .populate('userId')
+          .skip(skip)
+          .limit(Number(limit));
+
       // Fetch Todos using aggregation: 
-      const todos = await todoModel.aggregate([
-        {
-          $lookup: {
-            from: 'users',
-            localField: 'userId',
-            foreignField: '_id',
-            as: 'userDetails'
-          }
-        }
-      ])
+      // const todos = await todoModel.aggregate([
+      //   {
+      //     $lookup: {
+      //       from: 'users',
+      //       localField: 'userId',
+      //       foreignField: '_id',
+      //       as: 'userDetails'
+      //     }
+      //   }
+      // ])
 
       // console.log("Todos: ",todos)
       const total = await todoModel.countDocuments({ task: { $ne: "undefined" } });
       const formattedTodos = todos.map(todo => ({
           _id: todo._id,
-          username: todo.userDetails[0].username || "Unknown",
+          username: todo.userId.username || "Unknown",
           task: todo.task,
           image: todo.image || null,
           isDeleted: todo.isDeleted,
@@ -54,6 +55,8 @@ export const getTodosForAdmin = async (req, res) => {
 
       res.status(200).json({ todos: formattedTodos, total });
   } catch (error) {
+    console.log(error);
+    
       res.status(500).json({ error: error.message });
   }
 };
@@ -61,7 +64,7 @@ export const getTodosForAdmin = async (req, res) => {
 export const getTodos = async (req, res) => {
   try {
     const todos = await todoModel.find({ userId: req.user.id, isDeleted: false });
-    res.status(200).json(todos);
+    res.status(200).json({todos});
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
