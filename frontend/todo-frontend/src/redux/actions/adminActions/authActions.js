@@ -13,7 +13,7 @@ export const login = (formData , navigate) => async (dispatch) => {
     alert("Login Successful!");
     navigate(adminDashboardFrontendRoute)
   } catch (error) {
-    alert(error.response?.data?.message || "Login Failed");
+    alert(error.message || "Login Failed");
     dispatch({ type: "LOGIN_FAILURE" });
   }
 };
@@ -26,7 +26,7 @@ export const logout = (navigate) => async (dispatch) => {
       return;
     }
     const response = await logoutMiddleware(token);
-    dispatch({type: "LOGOUT", payload: token})
+    dispatch({type: "LOGOUT", payload: response})
     alert("Logout successful");
     navigate(adminLoginFrontendRoute)
   } catch (error) {

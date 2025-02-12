@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { fetchTodos } from "../../redux/actions/adminActions/todoActions";
-import { login, logout } from "../../redux/actions/adminActions/authActions";
+import { logout } from "../../redux/actions/adminActions/authActions";
 import "../../styles/AdminDashboard.css";
+import { tokenValidator } from "../../services/tokenValidator";
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
@@ -15,12 +16,9 @@ const AdminDashboard = () => {
   const token = useSelector((state) => state.auth.token);
 
   useEffect(() => {
-        if (!token) {
-          dispatch({ type: "FETCH_TODOS_FAILURE" });
-          dispatch(login(navigate));
-          return;
-        }
-        dispatch(fetchTodos(page, token));
+      tokenValidator(token, dispatch, navigate, "FETCH_TODOS_FAILURE", () => {
+          dispatch(fetchTodos(page, token));
+      });
   }, []);
 
   return (

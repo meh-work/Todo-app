@@ -4,8 +4,9 @@ import { useNavigate } from "react-router-dom";
 import "../../styles/Dashboard.css";
 import { userLoginFrontendRoute } from "../../routes/routes";
 import { useDispatch, useSelector } from "react-redux";
-import { login, logout } from "../../redux/actions/userActions/userAuthActions";
+import { logout } from "../../redux/actions/userActions/userAuthActions";
 import { userFetchTodos } from "../../redux/actions/userActions/userTodoActions";
+import { tokenValidator } from "../../services/tokenValidator";
 
 const Dashboard = () => {
   const [newTask, setNewTask] = useState("");
@@ -18,13 +19,10 @@ const Dashboard = () => {
   const userTodos = useSelector((state) => state.userTodos.userTodos.todos) || [];
 
   useEffect(() => {
-    if (!token) {
-      dispatch({ type: "USER_LOGIN_FAILURE" });
-      dispatch(login(navigate));
-      return;
-    }
-    dispatch(userFetchTodos(token));
-  }, []);
+      tokenValidator(token, dispatch, navigate, "USER_LOGIN_FAILURE", () => {
+          dispatch(userFetchTodos(token));
+      }, false);
+  }, [token]);
 
   const handleAddTodo = async () => {
     if (!token) {
