@@ -46,8 +46,6 @@ const EditTodo = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-
-      console.log("Todo updated:", response.data);
       navigate("/dashboard"); // Redirect back to dashboard after update
     } catch (error) {
       console.error("Error updating todo:", error);

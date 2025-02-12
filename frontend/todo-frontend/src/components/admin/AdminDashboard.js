@@ -15,15 +15,13 @@ const AdminDashboard = () => {
   const token = useSelector((state) => state.auth.token);
 
   useEffect(() => {
-        console.log("Admin todos: ",todos);
-        
         if (!token) {
           dispatch({ type: "FETCH_TODOS_FAILURE" });
           dispatch(login(navigate));
           return;
         }
         dispatch(fetchTodos(page, token));
-  }, [dispatch, page, token, navigate]);
+  }, []);
 
   return (
     <div className="dashboard-container">

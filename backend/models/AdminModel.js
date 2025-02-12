@@ -4,7 +4,8 @@ import bcrypt from "bcryptjs";
 const AdminSchema = new mongoose.Schema({
   adminname: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  userType: {type: String, required: true, default: "Admin"}
+  userType: {type: String, required: true, default: "Admin"},
+  token: {type: String, default: ""}
 });
 
 AdminSchema.pre('save', async function (next) {

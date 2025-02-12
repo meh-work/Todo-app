@@ -15,7 +15,7 @@ export const createTodo = async (req, res) => {
 
 export const getTodosForAdmin = async (req, res) => {
   try {
-      const { page = 1, limit = 10 } = req.query;
+      const { page = 1, limit = 5 } = req.query;
       const skip = (page - 1) * limit;
 
       // Fetch Todos using populate: 
@@ -25,19 +25,6 @@ export const getTodosForAdmin = async (req, res) => {
           .skip(skip)
           .limit(Number(limit));
 
-      // Fetch Todos using aggregation: 
-      // const todos = await todoModel.aggregate([
-      //   {
-      //     $lookup: {
-      //       from: 'users',
-      //       localField: 'userId',
-      //       foreignField: '_id',
-      //       as: 'userDetails'
-      //     }
-      //   }
-      // ])
-
-      // console.log("Todos: ",todos)
       const total = await todoModel.countDocuments({ task: { $ne: "undefined" } });
       const formattedTodos = todos.map(todo => ({
           _id: todo._id,
@@ -50,8 +37,6 @@ export const getTodosForAdmin = async (req, res) => {
 
       res.status(200).json({ todos: formattedTodos, total });
   } catch (error) {
-    console.log(error);
-    
       res.status(500).json({ error: error.message });
   }
 };

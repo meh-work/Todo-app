@@ -12,14 +12,36 @@ export const adminLogin = async (adminname, password) => {
       if (!isMatch) return { error: "Invalid credentials", status: 400 };
   
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-  
-      return { message: "Login successful", token, status: 200 };
+
+      const updatedUser = await Admin.findByIdAndUpdate(user._id, {
+        token
+      }, {new: true})
+      
+      return { message: "Login successful", token, user: updatedUser, status: 200 };
     } catch (error) {
-        console.log(error);
-        
-      return { error: error.message, status: 500 };
+        return { error: error.message, status: 500 };
     }
   };
+
+  export const adminLogout = async (token) => {
+    try {
+      if (!token) {
+        return { error: "No token provided", status: 401 };
+      }
+      const user = await Admin.findOne({ token });
+      
+      if (!user) return { error: "Admin not found", status: 404 };
+
+      if(user.token !== ""){
+        await Admin.findByIdAndUpdate(user._id, {
+            token: ""
+        })
+        return { message : "Logout Successful", status: 200 };
+      }
+    } catch (error) {
+      return { error: error.message, status: 500}
+    }
+  }
 
   export const userRegister = async (username, password) => {
     try {

@@ -24,7 +24,6 @@ export const editTodos = async (id,task,isCompleted,imagePath) => {
       const updatedTodo = await TodoModel.findByIdAndUpdate(id, updateData, { new: true });
       return { updatedTodo, status: 200}
     } catch (error) {
-        console.log(error)
       return { error: error.message, status: 500}
     }
 }

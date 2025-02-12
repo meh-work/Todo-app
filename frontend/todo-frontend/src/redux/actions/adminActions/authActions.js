@@ -1,13 +1,16 @@
 
-import { adminDashboardFrontendRoute, adminLoginFrontendRoute, adminLoginRoute } from "../../../routes/routes.js";
+import { adminDashboardFrontendRoute, adminLoginFrontendRoute } from "../../../routes/routes.js";
+import { loginMiddleWare, logoutMiddleware } from "../../../services/authMiddleware.js";
 
 export const login = (formData , navigate) => async (dispatch) => {
   try {
-    const data = await adminLoginRoute(formData);
-    dispatch({ type: "LOGIN_SUCCESS", payload: data.token });
-    localStorage.setItem("token", data.token);
+    const { adminname, password } = formData;
+    const loginData = {adminname, password}
+    const {data} = await loginMiddleWare(loginData)
+    const loginToken = data.token;
+    dispatch({ type: "LOGIN_SUCCESS", payload: data });
+    localStorage.setItem("token", loginToken);
     alert("Login Successful!");
-    console.log(localStorage.getItem("Token fetched: ",data.token))
     navigate(adminDashboardFrontendRoute)
   } catch (error) {
     alert(error.response?.data?.message || "Login Failed");
@@ -15,7 +18,18 @@ export const login = (formData , navigate) => async (dispatch) => {
   }
 };
 
-export const logout = (navigate) => () => {
-  localStorage.removeItem("token");
-  navigate(adminLoginFrontendRoute)
+export const logout = (navigate) => async (dispatch) => {
+  try {
+    const token = localStorage.getItem("token"); 
+    if (!token) {
+      alert("Already Logged Out!");
+      return;
+    }
+    const response = await logoutMiddleware(token);
+    dispatch({type: "LOGOUT", payload: token})
+    alert("Logout successful");
+    navigate(adminLoginFrontendRoute)
+  } catch (error) {
+    alert("Logout Failed!");
+  }
 };

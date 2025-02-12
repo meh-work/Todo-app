@@ -24,7 +24,7 @@ const Dashboard = () => {
       return;
     }
     dispatch(userFetchTodos(token));
-  }, [dispatch, token, navigate]);
+  }, []);
 
   const handleAddTodo = async () => {
     if (!token) {
@@ -109,7 +109,7 @@ const Dashboard = () => {
       <div className="task-input-container">
         <input type="text" placeholder="Add new task" value={newTask} onChange={(e) => setNewTask(e.target.value)} />
         <input type="file" accept="image/*" onChange={handleImageChange} />
-        {imagePreview && <img src={imagePreview} alt="Preview" className="image-preview" />}
+        {imagePreview && <img src={imagePreview} alt="Preview" className="todo-image" />}
         <button onClick={handleAddTodo}>Add Task</button>
       </div>
 

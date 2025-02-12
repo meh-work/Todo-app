@@ -8,16 +8,13 @@ export const userFetchTodos = (token) => async (dispatch) => {
     //   },
     // });
     const response = await userFetchTodosRoute(token)
-    console.log("User todo respo: ",response)
     dispatch(userTodoReducer(response));
   } catch (error) {
     dispatch({ type: "FETCH_USER_TODOS_FAILURE" });
-    console.log(error)
   }
 };
 
 export const userTodoReducer= (data) =>{
-  console.log("Todo user reducer data: ",data);
   
  return {
     type: "FETCH_USER_TODOS_SUCCESS",

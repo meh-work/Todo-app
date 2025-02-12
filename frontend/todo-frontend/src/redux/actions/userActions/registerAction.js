@@ -8,7 +8,6 @@ export const register = (formData, navigate) => async (dispatch) => {
         alert(data.message || "Registration Successful!");
         navigate(userLoginFrontendRoute);
     } catch (error) {
-        console.log("Error: ",error)
         alert(error.response?.data?.message || error.message || "Registration Failed");
     }
 }

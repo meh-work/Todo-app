@@ -12,9 +12,10 @@ export const apiRequestBackend = async (method, url , data = null, token = null)
       method,
       url,
       data,
-      headers: token ? { Authorization: `Bearer ${authToken}`} : {}
+      headers: token ? { authorization: `Bearer ${authToken}`} : {}
     }
     const response = await api(config);
+    
     return response.data;
   } catch (error) {
     throw error.response?.data?.message || "Something went wrong!"
