@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { isExpired } from "react-jwt";
 import "../../styles/Dashboard.css";
 import { userLoginFrontendRoute } from "../../routes/routes";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../../redux/actions/userActions/userAuthActions";
+import { logout, login } from "../../redux/actions/userActions/userAuthActions";
 import { userFetchTodos } from "../../redux/actions/userActions/userTodoActions";
-import { tokenValidator } from "../../services/tokenValidator";
 
 const Dashboard = () => {
   const [newTask, setNewTask] = useState("");
@@ -19,14 +19,23 @@ const Dashboard = () => {
   const userTodos = useSelector((state) => state.userTodos.userTodos.todos) || [];
 
   useEffect(() => {
-      tokenValidator(token, dispatch, navigate, "USER_LOGIN_FAILURE", () => {
-          dispatch(userFetchTodos(token));
-      }, false);
+    const storedToken = localStorage.getItem("token");
+
+    if (!storedToken || isExpired(storedToken)) {
+      localStorage.removeItem("token");
+      navigate(userLoginFrontendRoute);
+      return;
+    }
+    if (storedToken && !token) {
+      dispatch(login(navigate));
+    } else {
+      dispatch(userFetchTodos(token));
+    }
   }, [token]);
 
   const handleAddTodo = async () => {
     if (!token) {
-      navigate("/login");
+      navigate(userLoginFrontendRoute);
       return;
     }
 
@@ -42,7 +51,7 @@ const Dashboard = () => {
       setNewTask("");
       setImage(null);
       setImagePreview(null);
-      dispatch(userFetchTodos(token)); // Refetch todos after adding
+      dispatch(userFetchTodos(token));
     } catch (error) {
       console.error("Error adding todo:", error);
       alert("Error adding todo");
@@ -70,7 +79,7 @@ const Dashboard = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      dispatch(userFetchTodos(token)); // Refetch todos after deletion
+      dispatch(userFetchTodos(token));
     } catch (error) {
       console.error("Error deleting todo:", error);
       alert("Error deleting todo");
@@ -79,7 +88,7 @@ const Dashboard = () => {
 
   const handleUpdateTodo = async (id, task, isCompleted) => {
     if (!token) {
-      navigate("/login");
+      navigate(userLoginFrontendRoute);
       return;
     }
 
@@ -90,7 +99,7 @@ const Dashboard = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      dispatch(userFetchTodos(token)); // Refetch todos after update
+      dispatch(userFetchTodos(token));
     } catch (error) {
       console.error("Error updating todo:", error);
       alert("Error updating todo");
@@ -144,7 +153,9 @@ const Dashboard = () => {
                     )}
                   </td>
                   <td>
-                    <button className="todo-task-button" onClick={() => navigate(`/edit-todo/${todo._id}`, { state: { todo } })}>Edit</button>
+                    <button className="todo-task-button" onClick={() => navigate(`/edit-todo/${todo._id}`, { state: { todo } })}>
+                      Edit
+                    </button>
                     <button onClick={() => handleDeleteTodo(todo._id)}>Delete</button>
                   </td>
                 </tr>

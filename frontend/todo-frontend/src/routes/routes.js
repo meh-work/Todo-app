@@ -35,10 +35,13 @@ export const userRegisterRoute = async (formData) => {
 
 export const userLoginRoute = async (formData) => {
     const data = await apiRequestBackend("POST", userLoginBackendRoute, formData)
+    console.log(`Api data: ${JSON.stringify(data)}`);
     return data;
 }
 
 export const userFetchTodosRoute = async (token) => {
     const response = await apiRequestBackend("GET", userDashboardBackendRoute,token);
+    console.log(`User todos: ${JSON.stringify(response)}`);
+    
     return response;
 }

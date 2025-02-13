@@ -15,6 +15,8 @@ export const apiRequestBackend = async (method, url , data = null, token = null)
       headers: token ? { authorization: `Bearer ${authToken}`} : {}
     }
     const response = await api(config);
+    console.log("ApiRequestBackend: ",response.data);
+    
     
     return response.data;
   } catch (error) {

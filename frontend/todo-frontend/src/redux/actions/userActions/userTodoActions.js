@@ -2,11 +2,6 @@ import { userFetchTodosRoute } from "../../../routes/routes";
 
 export const userFetchTodos = (token) => async (dispatch) => {    
   try {
-    // const response = await axios.get(userFetchTodosRoute, {
-    //   headers: {
-    //     Authorization: `Bearer ${token}`,
-    //   },
-    // });
     const response = await userFetchTodosRoute(token)
     dispatch(userTodoReducer(response));
   } catch (error) {

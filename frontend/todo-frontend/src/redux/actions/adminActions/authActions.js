@@ -8,12 +8,17 @@ export const login = (formData , navigate) => async (dispatch) => {
     const loginData = {adminname, password}
     const {data} = await loginMiddleWare(loginData)
     const loginToken = data.token;
-    dispatch({ type: "LOGIN_SUCCESS", payload: data });
-    localStorage.setItem("token", loginToken);
-    alert("Login Successful!");
-    navigate(adminDashboardFrontendRoute)
+    if(loginData){
+      dispatch({ type: "LOGIN_SUCCESS", payload: data });
+      localStorage.setItem("token", loginToken);
+      alert("Login Successful!");
+      navigate(adminDashboardFrontendRoute)
+    } else {
+      throw new Error("Invalid token recieved.")
+    }
   } catch (error) {
-    alert(error.message || "Login Failed");
+    alert("Invalid Credentials");
+    navigate(adminLoginFrontendRoute)
     dispatch({ type: "LOGIN_FAILURE" });
   }
 };
@@ -25,8 +30,9 @@ export const logout = (navigate) => async (dispatch) => {
       alert("Already Logged Out!");
       return;
     }
-    const response = await logoutMiddleware(token);
-    dispatch({type: "LOGOUT", payload: response})
+    await logoutMiddleware(token);
+    localStorage.removeItem("token")
+    dispatch({type: "LOGOUT"})
     alert("Logout successful");
     navigate(adminLoginFrontendRoute)
   } catch (error) {

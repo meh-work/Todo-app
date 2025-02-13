@@ -2,13 +2,21 @@ import { userDashboardFrontendRoute, userLoginFrontendRoute, userLoginRoute } fr
 
 export const login = (formData, navigate) => async (dispatch) => {
   try {
-    const data = await userLoginRoute(formData);
-    dispatch({ type: "USER_LOGIN_SUCCESS", payload: data.token });
-    localStorage.setItem("token", data.token);
+    const { username, password } = formData;
+    const userLoginData = {username, password}
+    const {data} = await userLoginRoute(userLoginData);
+    console.log(`User data: ${JSON.stringify(data)}`);
+    const { user } = data;
+    
+    const userLoginToken = user.token
+    
+    dispatch({ type: "USER_LOGIN_SUCCESS", payload: data });
+    localStorage.setItem("token", userLoginToken);
     alert("Login Successful!");
     navigate(userDashboardFrontendRoute);
   } catch (error) {
-    alert(error.response?.data?.message || "Login Failed");
+    console.log(error)
+    alert(error.message || "Login Failed");
     dispatch({ type: "USER_LOGIN_FAILURE" });
   }
 };

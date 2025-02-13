@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { isExpired } from "react-jwt"
 import { fetchTodos } from "../../redux/actions/adminActions/todoActions";
-import { logout } from "../../redux/actions/adminActions/authActions";
+import { login, logout } from "../../redux/actions/adminActions/authActions";
 import "../../styles/AdminDashboard.css";
-import { tokenValidator } from "../../services/tokenValidator";
+import { adminLoginFrontendRoute } from "../../routes/routes";
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
@@ -16,10 +17,19 @@ const AdminDashboard = () => {
   const token = useSelector((state) => state.auth.token);
 
   useEffect(() => {
-      tokenValidator(token, dispatch, navigate, "FETCH_TODOS_FAILURE", () => {
-          dispatch(fetchTodos(page, token));
-      });
-  }, []);
+    const storedToken = localStorage.getItem("token");
+
+    if( !storedToken || isExpired(storedToken)){
+      localStorage.removeItem("token");
+      navigate(adminLoginFrontendRoute)
+      return;
+    }
+    if(storedToken && !token) {
+      dispatch(login(navigate));
+    } else{
+      dispatch(fetchTodos(page,token))
+    }
+  },[token]);
 
   return (
     <div className="dashboard-container">

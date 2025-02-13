@@ -16,7 +16,7 @@ const Login = () => {
   return (
     <div className="dashboard-container">
         <div className="dashboard-header"><h2>Login</h2></div>
-      <form onSubmit={handleSubmit} method="post">
+      <form onSubmit={handleSubmit}>
         <input
           type="text"
           name="username"
