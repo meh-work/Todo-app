@@ -65,8 +65,13 @@ export const userLogin = async (username, password) => {
       if (!isMatch) return { error: "Invalid credentials", status: 400 };
   
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-      return ({ message: "Login successful", token, status: 200 });
+
+      const updatedUser = await User.findByIdAndUpdate(user._id, {
+        token
+      }, {new : true});
+
+      return ({ message: "Login successful", user: updatedUser, status: 200 });
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      return { error: error.message, status: 500 }
     }
 }

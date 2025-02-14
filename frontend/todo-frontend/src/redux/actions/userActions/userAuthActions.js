@@ -5,7 +5,6 @@ export const login = (formData, navigate) => async (dispatch) => {
     const { username, password } = formData;
     const userLoginData = {username, password}
     const {data} = await userLoginRoute(userLoginData);
-    console.log(`User data: ${JSON.stringify(data)}`);
     const { user } = data;
     
     const userLoginToken = user.token
@@ -15,7 +14,6 @@ export const login = (formData, navigate) => async (dispatch) => {
     alert("Login Successful!");
     navigate(userDashboardFrontendRoute);
   } catch (error) {
-    console.log(error)
     alert(error.message || "Login Failed");
     dispatch({ type: "USER_LOGIN_FAILURE" });
   }

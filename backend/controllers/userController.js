@@ -19,6 +19,6 @@ export const login = async (req, res) => {
     return res.status(result.status).json({ message: result.error });
   }
 
-  res.status(result.status).json({ message: result.message, token: result.token })
+  res.status(result.status).json({ message: result.message, data: result })
 };
 

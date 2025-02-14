@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { isExpired } from "react-jwt";
 import "../../styles/Dashboard.css";
-import { userLoginFrontendRoute } from "../../routes/routes";
 import { useDispatch, useSelector } from "react-redux";
-import { logout, login } from "../../redux/actions/userActions/userAuthActions";
+import { logout } from "../../redux/actions/userActions/userAuthActions";
 import { userFetchTodos } from "../../redux/actions/userActions/userTodoActions";
 
 const Dashboard = () => {
@@ -13,38 +11,23 @@ const Dashboard = () => {
   const [image, setImage] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
   const userTodos = useSelector((state) => state.userTodos.userTodos.todos) || [];
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-
-    if (!storedToken || isExpired(storedToken)) {
-      localStorage.removeItem("token");
-      navigate(userLoginFrontendRoute);
-      return;
-    }
-    if (storedToken && !token) {
-      dispatch(login(navigate));
-    } else {
-      dispatch(userFetchTodos(token));
-    }
-  }, [token]);
+    dispatch(userFetchTodos(token));
+  }, [dispatch, token]);
 
   const handleAddTodo = async () => {
-    if (!token) {
-      navigate(userLoginFrontendRoute);
-      return;
-    }
-
     try {
       const formData = new FormData();
       formData.append("task", newTask);
       if (image) formData.append("image", image);
 
-      await axios.post("http://localhost:5000/api/todos", formData, {
+      await axios.post("http://localhost:5000/api/todos/", formData, {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
       });
 
@@ -69,11 +52,6 @@ const Dashboard = () => {
   };
 
   const handleDeleteTodo = async (id) => {
-    if (!token) {
-      navigate(userLoginFrontendRoute);
-      return;
-    }
-
     try {
       await axios.delete(`http://localhost:5000/api/todos/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -87,11 +65,6 @@ const Dashboard = () => {
   };
 
   const handleUpdateTodo = async (id, task, isCompleted) => {
-    if (!token) {
-      navigate(userLoginFrontendRoute);
-      return;
-    }
-
     try {
       await axios.put(
         `http://localhost:5000/api/todos/${id}`,

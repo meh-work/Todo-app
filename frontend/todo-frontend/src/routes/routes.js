@@ -1,17 +1,24 @@
 import axios from "axios"
+
+// Base Urls
 import { apiRequestBackend } from "../services/api"
 import { backendBaseUrl } from "./baseUrl"
-const userLoginBackendRoute = "/users/login"
-const userRegisterBackendRoute = "/users/register"
+
+// Backend Routes
+const adminDashboardBackendRoute = "/todos/admin"
 const adminLoginBackendRoute = "admin/login"
 const adminLogoutBackendRoute = "admin/logout"
+const userLoginBackendRoute = "/users/login"
+const userRegisterBackendRoute = "/users/register"
+const userDashboardBackendRoute = "/todos"
+
+// Frontend Routes
 export const adminLoginFrontendRoute = "/admin-login"
+export const adminDashboardFrontendRoute = "/admin-dashboard"
 export const userLoginFrontendRoute = "/"
 export const userRegisterFrontendRoute = "/register"
 export const userDashboardFrontendRoute = "/dashboard"
-const userDashboardBackendRoute = "/todos"
-const adminDashboardBackendRoute = "/todos/admin"
-export const adminDashboardFrontendRoute = "/admin-dashboard"
+export const userTodoEditFrontendRoute = "/edit-todo/:id"
 
 export const adminLoginRoute = async (loginData) => {  
     const {data} = await axios.post(`${backendBaseUrl}/${adminLoginBackendRoute}`,loginData)
@@ -35,13 +42,10 @@ export const userRegisterRoute = async (formData) => {
 
 export const userLoginRoute = async (formData) => {
     const data = await apiRequestBackend("POST", userLoginBackendRoute, formData)
-    console.log(`Api data: ${JSON.stringify(data)}`);
     return data;
 }
 
 export const userFetchTodosRoute = async (token) => {
     const response = await apiRequestBackend("GET", userDashboardBackendRoute,token);
-    console.log(`User todos: ${JSON.stringify(response)}`);
-    
     return response;
 }
