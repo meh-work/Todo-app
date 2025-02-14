@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -7,10 +7,15 @@ const EditTodo = () => {
   const navigate = useNavigate();
   const { todo } = location.state || {};
 
-  // State for editing task and image
   const [editTask, setEditTask] = useState(todo?.task || "");
   const [editImage, setEditImage] = useState(null);
   const [editImagePreview, setEditImagePreview] = useState(todo?.image ? `http://localhost:5000/${todo.image}` : null);
+
+  useEffect(() => {
+    if (!todo) {
+      navigate("/dashboard"); // Redirect if no todo found
+    }
+  }, [todo, navigate]);
 
   const handleEditImageChange = (e) => {
     const file = e.target.files[0];
@@ -18,9 +23,7 @@ const EditTodo = () => {
 
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setEditImagePreview(reader.result);
-      };
+      reader.onloadend = () => setEditImagePreview(reader.result);
       reader.readAsDataURL(file);
     }
   };
@@ -40,14 +43,14 @@ const EditTodo = () => {
         formData.append("image", editImage);
       }
 
-      const response = await axios.put(`http://localhost:5000/api/todos/${todo._id}`, formData, {
+      await axios.put(`http://localhost:5000/api/todos/${todo._id}`, formData, {
         headers: {
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       });
-      
-      navigate("/dashboard"); // Redirect back to dashboard after update
+
+      navigate("/dashboard");
     } catch (error) {
       console.error("Error updating todo:", error);
       alert("Error updating todo");

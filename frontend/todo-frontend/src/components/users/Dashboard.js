@@ -11,11 +11,12 @@ const Dashboard = () => {
   const [image, setImage] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
-  
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
-  const userTodos = useSelector((state) => state.userTodos.userTodos.todos) || [];
+  const userTodos =
+    useSelector((state) => state.userTodos.userTodos.todos) || [];
 
   useEffect(() => {
     dispatch(userFetchTodos(token));
@@ -27,8 +28,11 @@ const Dashboard = () => {
       formData.append("task", newTask);
       if (image) formData.append("image", image);
 
-      await axios.post("http://localhost:5000/api/todos/", formData, {
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
+      await axios.post("http://localhost:5000/api/todos", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       setNewTask("");
@@ -87,9 +91,16 @@ const Dashboard = () => {
       <h2 className="dashboard-header">Welcome to Your Dashboard</h2>
 
       <div className="task-input-container">
-        <input type="text" placeholder="Add new task" value={newTask} onChange={(e) => setNewTask(e.target.value)} />
+        <input
+          type="text"
+          placeholder="Add new task"
+          value={newTask}
+          onChange={(e) => setNewTask(e.target.value)}
+        />
         <input type="file" accept="image/*" onChange={handleImageChange} />
-        {imagePreview && <img src={imagePreview} alt="Preview" className="todo-image" />}
+        {imagePreview && (
+          <img src={imagePreview} alt="Preview" className="todo-image" />
+        )}
         <button onClick={handleAddTodo}>Add Task</button>
       </div>
 
@@ -109,27 +120,46 @@ const Dashboard = () => {
               {userTodos.map((todo) => (
                 <tr key={todo._id}>
                   <td title={todo.task}>
-                    {todo.task.length > 10 ? todo.task.substring(0, 10) + "..." : todo.task}
+                    {todo.task.length > 10
+                      ? todo.task.substring(0, 10) + "..."
+                      : todo.task}
                   </td>
                   <td>
                     <input
                       type="checkbox"
                       checked={todo.isCompleted}
-                      onChange={() => handleUpdateTodo(todo._id, todo.task, todo.isCompleted)}
+                      onChange={() =>
+                        handleUpdateTodo(todo._id, todo.task, todo.isCompleted)
+                      }
                     />
                   </td>
                   <td>
                     {todo.image ? (
-                      <button onClick={() => setSelectedImage(`http://localhost:5000/${todo.image}`)}>View Image</button>
+                      <button
+                        onClick={() =>
+                          setSelectedImage(
+                            `http://localhost:5000/${todo.image}`
+                          )
+                        }
+                      >
+                        View Image
+                      </button>
                     ) : (
                       "No Image"
                     )}
                   </td>
                   <td>
-                    <button className="todo-task-button" onClick={() => navigate(`/edit-todo/${todo._id}`, { state: { todo } })}>
+                    <button
+                      className="todo-task-button"
+                      onClick={() =>
+                        navigate(`/edit-todo/${todo._id}`, { state: { todo } })
+                      }
+                    >
                       Edit
                     </button>
-                    <button onClick={() => handleDeleteTodo(todo._id)}>Delete</button>
+                    <button onClick={() => handleDeleteTodo(todo._id)}>
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -141,7 +171,10 @@ const Dashboard = () => {
       </div>
 
       {selectedImage && (
-        <div className="image-preview-overlay" onClick={() => setSelectedImage(null)}>
+        <div
+          className="image-preview-overlay"
+          onClick={() => setSelectedImage(null)}
+        >
           <div className="image-preview">
             <img src={selectedImage} alt="Task Preview" />
             <button onClick={() => setSelectedImage(null)}>Close</button>
