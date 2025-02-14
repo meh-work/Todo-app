@@ -1,0 +1,25 @@
+.profile-container {
+  max-width: 400px;
+  margin: auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.profile-pic {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.profile-content input {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0;
+}
+
+.back-btn {
+  margin-bottom: 10px;
+  cursor: pointer;
+}

@@ -112,3 +112,43 @@ export const userLogout = async (token) => {
     return { error: error.message, status: 500 };
   }
 };
+
+export const getUserProfile = async (token) => {
+  try {
+    if (!token) {
+      return { error: "No token provided.", status: 401 };
+    }
+
+    const user = await User.findOne({ token });
+    console.log("Get user profile user: ", user);
+
+    return { status: 200, user: user };
+  } catch (error) {
+    return { error: error.message, status: 500 };
+  }
+};
+
+export const updateUserData = async (token, data) => {
+  console.log("Updates of user data: ", data);
+  const { name, email } = data;
+  console.log(`Name: ${name} Email: ${email}`);
+  try {
+    if (!token) {
+      return { error: "No token provided.", status: 401 };
+    }
+    const user = await User.findOne({ token });
+
+    const updateUserProfile = await User.findByIdAndUpdate(user._id, {
+      name: name,
+      email: email,
+    });
+
+    return {
+      message: "User Data Updated Successfully!",
+      user: updateUserProfile,
+      status: 200,
+    };
+  } catch (error) {
+    return { error: error.message, status: 500 };
+  }
+};

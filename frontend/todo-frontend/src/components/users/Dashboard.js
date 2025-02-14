@@ -4,7 +4,10 @@ import { useNavigate } from "react-router-dom";
 import "../../styles/Dashboard.css";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/actions/userActions/userAuthActions";
-import { userFetchTodos } from "../../redux/actions/userActions/userTodoActions";
+import {
+  userFetchTodos,
+  userViewProfile,
+} from "../../redux/actions/userActions/userTodoActions";
 
 const Dashboard = () => {
   const [newTask, setNewTask] = useState("");
@@ -20,7 +23,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     dispatch(userFetchTodos(token));
-  }, [dispatch, token]);
+  }, [token]);
 
   const handleAddTodo = async () => {
     try {
@@ -85,6 +88,12 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
+      <button
+        className="profile-btn"
+        onClick={() => dispatch(userViewProfile(token, navigate))}
+      >
+        Profile
+      </button>
       <button className="logout" onClick={() => dispatch(logout(navigate))}>
         Logout
       </button>

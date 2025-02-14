@@ -12,6 +12,7 @@ const userLoginBackendRoute = "/users/login";
 const userRegisterBackendRoute = "/users/register";
 const userLogoutBackendRoute = "/users/logout";
 const userDashboardBackendRoute = "/todos";
+const userFetchUserProfileBackendRoute = "users/user-profile";
 
 // Frontend routes
 export const adminLoginFrontendRoute = "/admin-login";
@@ -20,6 +21,7 @@ export const userLoginFrontendRoute = "/";
 export const userRegisterFrontendRoute = "/register";
 export const userDashboardFrontendRoute = "/dashboard";
 export const userTodoEditFrontendRoute = "edit-todo/:id";
+export const userViewProfileFrontendRoute = "/view-profile";
 
 export const adminLoginRoute = async (loginData) => {
   const { data } = await axios.post(
@@ -71,6 +73,18 @@ export const userFetchTodosRoute = async (token) => {
     token
   );
   console.log(`User todos: ${JSON.stringify(response)}`);
+
+  return response;
+};
+
+export const fetchUserProfile = async (token) => {
+  const response = await apiRequestBackend(
+    "GET",
+    userFetchUserProfileBackendRoute,
+    token
+  );
+
+  console.log("fetchUserProfile: ", response);
 
   return response;
 };

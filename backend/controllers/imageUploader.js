@@ -8,7 +8,12 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + path.extname(file.originalname)); // Rename file
   },
 });
+const storage2 = multer.diskStorage({
+  destination: "./uploads/profile",
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // Rename file
+  },
+});
 
-const imageUploader = multer({ storage });
-
-export default imageUploader;
+export const imageUploader = multer({ storage });
+export const profileImageUploader = multer({ storage2 });

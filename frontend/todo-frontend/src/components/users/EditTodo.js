@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import {
+  userDashboardFrontendRoute,
+  userLoginFrontendRoute,
+} from "../../routes/routes";
 
 const EditTodo = () => {
   const location = useLocation();
@@ -9,11 +13,13 @@ const EditTodo = () => {
 
   const [editTask, setEditTask] = useState(todo?.task || "");
   const [editImage, setEditImage] = useState(null);
-  const [editImagePreview, setEditImagePreview] = useState(todo?.image ? `http://localhost:5000/${todo.image}` : null);
+  const [editImagePreview, setEditImagePreview] = useState(
+    todo?.image ? `http://localhost:5000/${todo.image}` : null
+  );
 
   useEffect(() => {
     if (!todo) {
-      navigate("/dashboard"); // Redirect if no todo found
+      navigate(userDashboardFrontendRoute); // Redirect if no todo found
     }
   }, [todo, navigate]);
 
@@ -33,7 +39,7 @@ const EditTodo = () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        navigate("/login");
+        navigate(userLoginFrontendRoute);
         return;
       }
 
@@ -50,7 +56,7 @@ const EditTodo = () => {
         },
       });
 
-      navigate("/dashboard");
+      navigate(userDashboardFrontendRoute);
     } catch (error) {
       console.error("Error updating todo:", error);
       alert("Error updating todo");
@@ -70,7 +76,11 @@ const EditTodo = () => {
         <input type="file" accept="image/*" onChange={handleEditImageChange} />
         {editImagePreview && (
           <div>
-            <img src={editImagePreview} alt="Preview" style={{ maxWidth: "200px", maxHeight: "200px" }} />
+            <img
+              src={editImagePreview}
+              alt="Preview"
+              style={{ maxWidth: "200px", maxHeight: "200px" }}
+            />
           </div>
         )}
         <button type="submit">Update Todo</button>
