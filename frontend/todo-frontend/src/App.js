@@ -7,6 +7,14 @@ import EditTodo from "./components/users/EditTodo";
 import AdminLogin from "./components/admin/AdminLogin";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import { isExpired } from "react-jwt";
+import {
+  adminDashboardFrontendRoute,
+  adminLoginFrontendRoute,
+  userDashboardFrontendRoute,
+  userLoginFrontendRoute,
+  userRegisterFrontendRoute,
+  userTodoEditFrontendRoute,
+} from "./routes/routes";
 
 const ProtectedRoute = ({ children, admin }) => {
   const token = localStorage.getItem("token");
@@ -23,13 +31,13 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/admin-login" element={<AdminLogin />} />
-        <Route path="/register" element={<Register />} />
+        <Route path={userLoginFrontendRoute} element={<Login />} />
+        <Route path={adminLoginFrontendRoute} element={<AdminLogin />} />
+        <Route path={userRegisterFrontendRoute} element={<Register />} />
 
         {/* Protected Routes */}
         <Route
-          path="/admin-dashboard"
+          path={adminDashboardFrontendRoute}
           element={
             <ProtectedRoute admin>
               <AdminDashboard />
@@ -37,7 +45,7 @@ function App() {
           }
         />
         <Route
-          path="/dashboard"
+          path={userDashboardFrontendRoute}
           element={
             <ProtectedRoute>
               <Dashboard />
@@ -45,7 +53,7 @@ function App() {
           }
         />
         <Route
-          path="/edit-todo/:id"
+          path={userTodoEditFrontendRoute}
           element={
             <ProtectedRoute>
               <EditTodo />
