@@ -66,7 +66,7 @@ export const updateTodo = async (req, res) => {
   if (result.error) {
     return res.status(result.status).json({ message: result.error });
   }
-  res.status(result.status).json({ message: result.error });
+  res.status(result.status).json({ message: result.message });
 };
 
 export const deleteTodo = async (req, res) => {

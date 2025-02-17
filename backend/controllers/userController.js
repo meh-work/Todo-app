@@ -59,14 +59,19 @@ export const updateUserProfile = async (req, res) => {
   const token =
     req.headers.authorization && req.headers.authorization.split(" ")[1];
   console.log("Get Users token: ", token);
-  const formData = req.body;
+  const { name, email } = req.body;
+  const imagePath = req.file ? `uploads/profile/${req.file.filename}` : null;
 
-  console.log("Update user data: ", formData);
+  console.log("imgPath: ", req.file);
+  console.log("Update user data: ", req.body);
 
-  const result = await updateUserData(token, formData);
+  const result = await updateUserData(token, { name, email }, imagePath);
 
   if (result.error) {
     return res.status(result.status).json({ message: result.error });
   }
-  res.status(result.status).json({ message: result.message, data: result });
+  res.status(result.status).json({
+    message: result.message,
+    data: { result, imagePath },
+  });
 };

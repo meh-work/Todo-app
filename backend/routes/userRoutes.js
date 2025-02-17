@@ -16,7 +16,7 @@ router.post("/register", register);
 router.post("/login", login);
 router.post("/logout", logout);
 router.get("/user-profile", getUser);
-router.put(
+router.post(
   "/user-profile",
   profileImageUploader.single("image"),
   updateUserProfile

@@ -15,16 +15,23 @@ const Profile = () => {
   const [email, setEmail] = useState("");
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const res = await fetchUserProfile(token);
-        console.log("User profile data: ", res);
-        setUser(res.data.user); // Ensure correct data structure
+        console.log("User profile data: ", res.data);
+
+        setUser(res.data.user);
         setName(res.data.user.name);
         setEmail(res.data.user.email);
+
+        // Set image preview from API response if it exists
+        if (res.data.user.image) {
+          setImagePreview(`http://localhost:5000/${res.data.user.image}`);
+        }
       } catch (error) {
         console.error("Error fetching profile:", error);
       }
@@ -50,7 +57,8 @@ const Profile = () => {
       if (image) formData.append("image", image);
 
       console.log("Update of formdata: ", formData);
-      await axios.put(
+
+      const res = await axios.post(
         "http://localhost:5000/api/users/user-profile",
         formData,
         {
@@ -61,7 +69,12 @@ const Profile = () => {
         }
       );
 
+      console.log("Updated image result: ", res.data);
+
       alert("Profile updated successfully!");
+      setUser(res.data.user);
+      setImagePreview(`http://localhost:5000/${res.data.imagePath}`);
+      setIsEditing(false);
       navigate(userDashboardFrontendRoute);
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -78,31 +91,41 @@ const Profile = () => {
       {user ? (
         <div className="profile-content">
           <img
-            src={
-              imagePreview ||
-              (user.image
-                ? `http://localhost:5000/uploads/${user.image}`
-                : "/default-avatar.png")
-            }
+            src={imagePreview || "/default-avatar.png"}
             alt="Profile"
             className="profile-pic"
           />
-          <input type="file" accept="image/*" onChange={handleImageChange} />
+          {isEditing && (
+            <input type="file" accept="image/*" onChange={handleImageChange} />
+          )}
 
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Name"
-          />
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-          />
-
-          <button onClick={handleUpdateProfile}>Update Profile</button>
+          {isEditing ? (
+            <>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Name"
+              />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email"
+              />
+              <button onClick={handleUpdateProfile}>Save Changes</button>
+            </>
+          ) : (
+            <>
+              <p>
+                <strong>Name:</strong> {user.name}
+              </p>
+              <p>
+                <strong>Email:</strong> {user.email}
+              </p>
+              <button onClick={() => setIsEditing(true)}>Edit Profile</button>
+            </>
+          )}
         </div>
       ) : (
         <p>Loading profile...</p>

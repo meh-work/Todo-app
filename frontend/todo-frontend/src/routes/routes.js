@@ -84,7 +84,7 @@ export const fetchUserProfile = async (token) => {
     token
   );
 
-  console.log("fetchUserProfile: ", response);
+  console.log("fetchUserProfile: ", response.data);
 
   return response;
 };

@@ -128,8 +128,9 @@ export const getUserProfile = async (token) => {
   }
 };
 
-export const updateUserData = async (token, data) => {
+export const updateUserData = async (token, data, imgPath) => {
   console.log("Updates of user data: ", data);
+  console.log("Image: ", imgPath);
   const { name, email } = data;
   console.log(`Name: ${name} Email: ${email}`);
   try {
@@ -141,7 +142,10 @@ export const updateUserData = async (token, data) => {
     const updateUserProfile = await User.findByIdAndUpdate(user._id, {
       name: name,
       email: email,
+      image: imgPath,
     });
+
+    console.log("User Data updated: ", updateUserData);
 
     return {
       message: "User Data Updated Successfully!",
