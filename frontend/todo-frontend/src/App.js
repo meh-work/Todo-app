@@ -10,12 +10,14 @@ import Login from "./components/users/Login";
 import Register from "./components/users/Register";
 import Dashboard from "./components/users/Dashboard";
 import EditTodo from "./components/users/EditTodo";
+import AssignTask from "./components/users/AssignTask";
 import AdminLogin from "./components/admin/AdminLogin";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import { isExpired } from "react-jwt";
 import {
   adminDashboardFrontendRoute,
   adminLoginFrontendRoute,
+  userAssignTaskFrontendRoute,
   userDashboardFrontendRoute,
   userLoginFrontendRoute,
   userRegisterFrontendRoute,
@@ -52,6 +54,7 @@ function App() {
           <Route path={userDashboardFrontendRoute} element={<Dashboard />} />
           <Route path={userTodoEditFrontendRoute} element={<EditTodo />} />
           <Route path={userViewProfileFrontendRoute} element={<Profile />} />
+          <Route path={userAssignTaskFrontendRoute} element={<AssignTask />} />
         </Route>
 
         {/* Protected Routes for Admin */}

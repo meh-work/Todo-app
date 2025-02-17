@@ -1,4 +1,5 @@
 import todoModel from "../models/TodoModel.js";
+import User from "../models/UserModel.js";
 import {
   addTodos,
   editTodos,
@@ -36,12 +37,38 @@ export const getTodosForAdmin = async (req, res) => {
       _id: todo._id,
       username: todo.userId ? todo.userId.username : "Unknown",
       task: todo.task,
-      image: todo.image ? `${todo.image}` : null,
+      image: todo.image ? `/${todo.image}` : null,
       isDeleted: todo.isDeleted,
       isCompleted: todo.isDeleted,
     }));
 
     res.status(200).json({ todos: formattedTodos, total });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const assignTask = async (req, res) => {
+  try {
+    const { userId, task } = req.body;
+    const adminId = req.user.id;
+
+    const userExists = await User.findById(userId);
+    if (!userExists) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const newTask = new todoModel({
+      userId,
+      task,
+      assignedBy: adminId,
+    });
+
+    await newTask.save();
+
+    res
+      .status(201)
+      .json({ message: "Task assigned successfully", task: newTask });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

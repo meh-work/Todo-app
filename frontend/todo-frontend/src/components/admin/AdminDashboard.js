@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { fetchTodos } from "../../redux/actions/adminActions/todoActions";
 import { logout } from "../../redux/actions/adminActions/authActions";
 import "../../styles/AdminDashboard.css";
+import { userAssignTaskFrontendRoute } from "../../routes/routes";
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
@@ -16,11 +17,17 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     dispatch(fetchTodos(page, token));
-    console.log("All admin todos: ", todos);
-  }, [page, token, dispatch]);
+    console.log("Fetched todos for admin: ", todos);
+  }, [page, token]);
 
   return (
     <div className="dashboard-container">
+      <button
+        onClick={() => navigate(userAssignTaskFrontendRoute)}
+        className="assign-task-btn"
+      >
+        Assign Task
+      </button>
       <button className="logout" onClick={() => dispatch(logout(navigate))}>
         Logout
       </button>
@@ -44,7 +51,7 @@ const AdminDashboard = () => {
                   {todo.image ? (
                     <button
                       onClick={() =>
-                        setSelectedImage(`http://localhost:5000/${todo.image}`)
+                        setSelectedImage(`http://localhost:5000${todo.image}`)
                       }
                     >
                       View Image

@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  getAllUsers,
   getUser,
   login,
   logout,
@@ -16,6 +17,7 @@ router.post("/register", register);
 router.post("/login", login);
 router.post("/logout", logout);
 router.get("/user-profile", getUser);
+router.get("/all-users", getAllUsers);
 router.post(
   "/user-profile",
   profileImageUploader.single("image"),

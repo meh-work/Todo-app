@@ -1,4 +1,5 @@
 import {
+  getAllUserProfiles,
   getUserProfile,
   updateUserData,
   userLogin,
@@ -48,6 +49,17 @@ export const getUser = async (req, res) => {
   console.log("Get Users token: ", token);
 
   const result = await getUserProfile(token);
+
+  if (result.error) {
+    return res.status(result.status).json({ message: result.error });
+  }
+  res.status(result.status).json({ message: result.message, data: result });
+};
+
+export const getAllUsers = async (req, res) => {
+  const token =
+    req.headers.authorization && req.headers.authorization.split(" ")[1];
+  const result = await getAllUserProfiles(token);
 
   if (result.error) {
     return res.status(result.status).json({ message: result.error });

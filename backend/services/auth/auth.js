@@ -128,6 +128,19 @@ export const getUserProfile = async (token) => {
   }
 };
 
+export const getAllUserProfiles = async (token) => {
+  try {
+    if (!token) {
+      return { error: "No token provided.", status: 401 };
+    }
+    const users = await User.find();
+    console.log("All Users: ", users);
+    return { status: 200, users: users };
+  } catch (error) {
+    return { error: error.message, status: 500 };
+  }
+};
+
 export const updateUserData = async (token, data, imgPath) => {
   console.log("Updates of user data: ", data);
   console.log("Image: ", imgPath);

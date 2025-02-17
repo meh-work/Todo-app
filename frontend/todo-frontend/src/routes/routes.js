@@ -8,6 +8,7 @@ import { backendBaseUrl } from "./baseUrl";
 const adminLoginBackendRoute = "admin/login";
 const adminLogoutBackendRoute = "admin/logout";
 const adminDashboardBackendRoute = "/todos/admin";
+const allUserProfileBackendRoute = "users/all-users";
 const userLoginBackendRoute = "/users/login";
 const userRegisterBackendRoute = "/users/register";
 const userLogoutBackendRoute = "/users/logout";
@@ -17,6 +18,7 @@ const userFetchUserProfileBackendRoute = "users/user-profile";
 // Frontend routes
 export const adminLoginFrontendRoute = "/admin-login";
 export const adminDashboardFrontendRoute = "/admin-dashboard";
+export const userAssignTaskFrontendRoute = "/task-assign";
 export const userLoginFrontendRoute = "/";
 export const userRegisterFrontendRoute = "/register";
 export const userDashboardFrontendRoute = "/dashboard";
@@ -45,6 +47,21 @@ export const adminFetchTodosRoute = async (page, token) => {
   console.log("admin response: ", response);
 
   return response;
+};
+export const adminFetchAllUser = async (token) => {
+  try {
+    const response = await apiRequestBackend(
+      "GET",
+      allUserProfileBackendRoute,
+      token
+    );
+    console.log("Adminfetchalluser response: ", response);
+
+    return response;
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    throw error;
+  }
 };
 
 export const userRegisterRoute = async (formData) => {
