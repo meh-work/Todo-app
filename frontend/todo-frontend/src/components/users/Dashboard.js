@@ -23,6 +23,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     dispatch(userFetchTodos(token));
+    console.log("User todos are: ", userTodos);
   }, [token]);
 
   const handleAddTodo = async () => {

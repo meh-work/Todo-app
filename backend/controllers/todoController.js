@@ -34,9 +34,9 @@ export const getTodosForAdmin = async (req, res) => {
     });
     const formattedTodos = todos.map((todo) => ({
       _id: todo._id,
-      username: todo.userId.username || "Unknown",
+      username: todo.userId ? todo.userId.username : "Unknown",
       task: todo.task,
-      image: todo.image || null,
+      image: todo.image ? `${todo.image}` : null,
       isDeleted: todo.isDeleted,
       isCompleted: todo.isDeleted,
     }));

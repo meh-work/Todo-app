@@ -39,9 +39,11 @@ export const adminLogoutRoute = async (token) => {
 export const adminFetchTodosRoute = async (page, token) => {
   const response = await apiRequestBackend(
     "GET",
-    `${adminDashboardBackendRoute}?page=${page}&limit=10`,
+    `${adminDashboardBackendRoute}?page=${page}&limit=5`,
     token
   );
+  console.log("admin response: ", response);
+
   return response;
 };
 

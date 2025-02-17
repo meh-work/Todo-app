@@ -16,7 +16,8 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     dispatch(fetchTodos(page, token));
-  }, [page, token]);
+    console.log("All admin todos: ", todos);
+  }, [page, token, dispatch]);
 
   return (
     <div className="dashboard-container">
@@ -49,7 +50,7 @@ const AdminDashboard = () => {
                       View Image
                     </button>
                   ) : (
-                    "Null"
+                    "No Image"
                   )}
                 </td>
               </tr>
