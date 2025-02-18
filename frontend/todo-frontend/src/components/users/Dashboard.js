@@ -1,13 +1,41 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "../../styles/Dashboard.css";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/actions/userActions/userAuthActions";
 import {
   userFetchTodos,
   userViewProfile,
 } from "../../redux/actions/userActions/userTodoActions";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Container,
+  TextField,
+  Checkbox,
+  IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Tooltip,
+  Avatar,
+  Box,
+  Modal,
+  Fade,
+} from "@mui/material";
+import {
+  Delete,
+  Edit,
+  Logout,
+  AccountCircle,
+  Visibility,
+} from "@mui/icons-material";
 
 const Dashboard = () => {
   const [newTask, setNewTask] = useState("");
@@ -63,7 +91,6 @@ const Dashboard = () => {
       await axios.delete(`http://localhost:5000/api/todos/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       dispatch(userFetchTodos(token));
     } catch (error) {
       console.error("Error deleting todo:", error);
@@ -76,9 +103,10 @@ const Dashboard = () => {
       await axios.put(
         `http://localhost:5000/api/todos/${id}`,
         { task, isCompleted: !isCompleted, image },
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
-
       dispatch(userFetchTodos(token));
     } catch (error) {
       console.error("Error updating todo:", error);
@@ -87,115 +115,151 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="dashboard-container">
-      <button
-        className="profile-btn"
-        onClick={() => dispatch(userViewProfile(token, navigate))}
-      >
-        Profile
-      </button>
-      <button className="logout" onClick={() => dispatch(logout(navigate))}>
-        Logout
-      </button>
-      <h2 className="dashboard-header">Welcome to Your Dashboard</h2>
+    <Container>
+      <AppBar position="static" sx={{ mb: 3 }}>
+        <Toolbar>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            Dashboard
+          </Typography>
+          <Button
+            color="inherit"
+            startIcon={<AccountCircle />}
+            onClick={() => dispatch(userViewProfile(token, navigate))}
+          >
+            Profile
+          </Button>
+          <Button
+            color="inherit"
+            startIcon={<Logout />}
+            onClick={() => dispatch(logout(navigate))}
+          >
+            Logout
+          </Button>
+        </Toolbar>
+      </AppBar>
 
-      <div className="task-input-container">
-        <input
-          type="text"
-          placeholder="Add new task"
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mb: 3 }}>
+        <TextField
+          label="Add new task"
+          variant="outlined"
+          fullWidth
           value={newTask}
           onChange={(e) => setNewTask(e.target.value)}
         />
-        <input type="file" accept="image/*" onChange={handleImageChange} />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+          style={{ marginBottom: "10px" }}
+        />
         {imagePreview && (
-          <img src={imagePreview} alt="Preview" className="todo-image" />
+          <Avatar src={imagePreview} sx={{ width: 80, height: 80 }} />
         )}
-        <button onClick={handleAddTodo}>Add Task</button>
-      </div>
+        <Button variant="contained" onClick={handleAddTodo}>
+          Add Task
+        </Button>
+      </Box>
 
-      <div className="todo-list-container">
-        <h3>Your Todo List</h3>
-        {userTodos.length > 0 ? (
-          <table className="todo-table">
-            <thead>
-              <tr>
-                <th>Task</th>
-                <th>Completed</th>
-                <th>Image</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {userTodos.map((todo) => (
-                <tr key={todo._id}>
-                  <td title={todo.task}>
-                    {todo.task.length > 10
-                      ? todo.task.substring(0, 10) + "..."
-                      : todo.task}
-                  </td>
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={todo.isCompleted}
-                      onChange={() =>
-                        handleUpdateTodo(
-                          todo._id,
-                          todo.task,
-                          todo.isCompleted,
-                          todo.image
-                        )
+      <TableContainer component={Paper} sx={{ maxHeight: 400 }}>
+        <Table stickyHeader>
+          <TableHead>
+            <TableRow>
+              <TableCell>Task</TableCell>
+              <TableCell>Completed</TableCell>
+              <TableCell>Image</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {userTodos.map((todo) => (
+              <TableRow key={todo._id}>
+                <TableCell>{todo.task}</TableCell>
+                <TableCell>
+                  <Checkbox
+                    checked={todo.isCompleted}
+                    onChange={() =>
+                      handleUpdateTodo(
+                        todo._id,
+                        todo.task,
+                        todo.isCompleted,
+                        todo.image
+                      )
+                    }
+                  />
+                </TableCell>
+                <TableCell>
+                  {todo.image ? (
+                    <Tooltip
+                      title={
+                        <Avatar src={`http://localhost:5000/${todo.image}`} />
                       }
-                    />
-                  </td>
-                  <td>
-                    {todo.image ? (
-                      <button
+                    >
+                      <IconButton
                         onClick={() =>
                           setSelectedImage(
                             `http://localhost:5000/${todo.image}`
                           )
                         }
                       >
-                        View Image
-                      </button>
-                    ) : (
-                      "No Image"
-                    )}
-                  </td>
-                  <td>
-                    <button
-                      className="todo-task-button"
-                      onClick={() =>
-                        navigate(`/edit-todo/${todo._id}`, { state: { todo } })
-                      }
-                    >
-                      Edit
-                    </button>
-                    <button onClick={() => handleDeleteTodo(todo._id)}>
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <p>No tasks found</p>
-        )}
-      </div>
+                        <Visibility />
+                      </IconButton>
+                    </Tooltip>
+                  ) : (
+                    "No Image"
+                  )}
+                </TableCell>
+                <TableCell>
+                  <IconButton
+                    onClick={() =>
+                      navigate(`/edit-todo/${todo._id}`, { state: { todo } })
+                    }
+                  >
+                    <Edit />
+                  </IconButton>
+                  <IconButton onClick={() => handleDeleteTodo(todo._id)}>
+                    <Delete />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
-      {selectedImage && (
-        <div
-          className="image-preview-overlay"
-          onClick={() => setSelectedImage(null)}
-        >
-          <div className="image-preview">
-            <img src={selectedImage} alt="Task Preview" />
-            <button onClick={() => setSelectedImage(null)}>Close</button>
-          </div>
-        </div>
-      )}
-    </div>
+      <Modal
+        open={Boolean(selectedImage)}
+        onClose={() => setSelectedImage(null)}
+      >
+        <Fade in={Boolean(selectedImage)}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              bgcolor: "background.paper",
+              p: 2,
+              boxShadow: 24,
+              borderRadius: 2,
+            }}
+          >
+            <img
+              src={selectedImage}
+              alt="Task Preview"
+              style={{ width: "100%", borderRadius: "10px" }}
+            />
+            <Button
+              fullWidth
+              variant="contained"
+              sx={{ mt: 2 }}
+              onClick={() => setSelectedImage(null)}
+            >
+              Close
+            </Button>
+          </Box>
+        </Fade>
+      </Modal>
+    </Container>
   );
 };
 

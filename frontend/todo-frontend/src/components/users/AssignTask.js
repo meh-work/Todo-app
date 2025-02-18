@@ -5,6 +5,18 @@ import {
   fetchUsers,
 } from "../../redux/actions/adminActions/todoActions";
 import { useNavigate } from "react-router-dom";
+import {
+  Button,
+  TextField,
+  Select,
+  MenuItem,
+  CircularProgress,
+  Paper,
+  Typography,
+  FormControl,
+  InputLabel,
+  Box,
+} from "@mui/material";
 
 const AssignTask = () => {
   const dispatch = useDispatch();
@@ -28,61 +40,111 @@ const AssignTask = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
-      <div className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md">
-        <button className="back-btn" onClick={() => navigate(-1)}>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        bgcolor: "#f4f6f9",
+      }}
+    >
+      <Paper
+        sx={{
+          padding: 4,
+          width: "100%",
+          maxWidth: 480,
+          borderRadius: 2,
+          boxShadow: 3,
+        }}
+      >
+        <Button
+          onClick={() => navigate(-1)}
+          sx={{ position: "absolute", top: 16, left: 16, color: "#3498db" }}
+        >
           ⬅ Back
-        </button>
-        <h2 className="text-xl font-semibold text-gray-700 mb-4 text-center">
+        </Button>
+        <Typography
+          variant="h5"
+          sx={{
+            textAlign: "center",
+            fontWeight: "bold",
+            marginBottom: 3,
+            color: "#2c3e50",
+          }}
+        >
           Assign Task to User
-        </h2>
+        </Typography>
+
         {loading && (
-          <p className="text-gray-500 text-center">Loading users...</p>
+          <CircularProgress
+            sx={{ display: "block", margin: "0 auto", color: "#3498db" }}
+          />
         )}
-        {error && <p className="text-red-500 text-center">{error}</p>}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-gray-600 font-medium">User:</label>
-            <select
-              value={selectedUser}
-              onChange={(e) => setSelectedUser(e.target.value)}
-              disabled={loading}
-              className="w-full p-2 mt-1 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
-            >
-              <option value="">Select a User</option>
-              {users && users.length > 0 ? (
-                users.map((user) => (
-                  <option key={user._id} value={user._id}>
-                    {user.username}
-                  </option>
-                ))
-              ) : (
-                <option disabled>No users found</option>
-              )}
-            </select>
-          </div>
-          <div>
-            <label className="block text-gray-600 font-medium">Task:</label>
-            <input
-              type="text"
+        {error && (
+          <Typography color="error" sx={{ textAlign: "center", marginTop: 2 }}>
+            {error}
+          </Typography>
+        )}
+
+        <form onSubmit={handleSubmit}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <FormControl fullWidth required variant="outlined">
+              <InputLabel>User</InputLabel>
+              <Select
+                value={selectedUser}
+                onChange={(e) => setSelectedUser(e.target.value)}
+                label="User"
+                disabled={loading}
+                sx={{ backgroundColor: "#fff" }}
+              >
+                <MenuItem value="">
+                  <em>Select a User</em>
+                </MenuItem>
+                {users && users.length > 0 ? (
+                  users.map((user) => (
+                    <MenuItem key={user._id} value={user._id}>
+                      {user.username}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem disabled>No users found</MenuItem>
+                )}
+              </Select>
+            </FormControl>
+
+            <TextField
+              label="Task"
+              variant="outlined"
               value={task}
               onChange={(e) => setTask(e.target.value)}
               required
+              fullWidth
               disabled={loading}
-              className="w-full p-2 mt-1 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
               placeholder="Enter task details..."
+              sx={{ backgroundColor: "#fff" }}
             />
-          </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300"
-          >
-            Assign Task
-          </button>
+
+            <Button
+              type="submit"
+              disabled={loading}
+              variant="contained"
+              color="primary"
+              sx={{
+                padding: "12px",
+                fontWeight: "bold",
+                marginTop: 2,
+                "&:hover": {
+                  backgroundColor: "#2980b9",
+                },
+              }}
+            >
+              Assign Task
+            </Button>
+          </Box>
         </form>
-      </div>
-    </div>
+      </Paper>
+    </Box>
   );
 };
 

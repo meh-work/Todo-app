@@ -5,6 +5,17 @@ import {
   userDashboardFrontendRoute,
   userLoginFrontendRoute,
 } from "../../routes/routes";
+import {
+  Container,
+  TextField,
+  Button,
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  IconButton,
+} from "@mui/material";
+import { PhotoCamera } from "@mui/icons-material";
 
 const EditTodo = () => {
   const location = useLocation();
@@ -19,7 +30,7 @@ const EditTodo = () => {
 
   useEffect(() => {
     if (!todo) {
-      navigate(userDashboardFrontendRoute); // Redirect if no todo found
+      navigate(userDashboardFrontendRoute);
     }
   }, [todo, navigate]);
 
@@ -64,28 +75,54 @@ const EditTodo = () => {
   };
 
   return (
-    <div>
-      <h2>Edit Task</h2>
-      <form onSubmit={handleEditSubmit}>
-        <input
-          type="text"
-          value={editTask}
-          onChange={(e) => setEditTask(e.target.value)}
-          required
-        />
-        <input type="file" accept="image/*" onChange={handleEditImageChange} />
-        {editImagePreview && (
-          <div>
-            <img
-              src={editImagePreview}
-              alt="Preview"
-              style={{ maxWidth: "200px", maxHeight: "200px" }}
+    <Container maxWidth="sm">
+      <Card sx={{ mt: 5, p: 3, boxShadow: 3, borderRadius: 3 }}>
+        <CardContent>
+          <Typography variant="h5" gutterBottom>
+            Edit Task
+          </Typography>
+          <form onSubmit={handleEditSubmit}>
+            <TextField
+              fullWidth
+              label="Task Name"
+              variant="outlined"
+              value={editTask}
+              onChange={(e) => setEditTask(e.target.value)}
+              required
+              sx={{ mb: 2 }}
             />
-          </div>
-        )}
-        <button type="submit">Update Todo</button>
-      </form>
-    </div>
+            <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+              <IconButton component="label">
+                <input
+                  type="file"
+                  hidden
+                  accept="image/*"
+                  onChange={handleEditImageChange}
+                />
+                <PhotoCamera />
+              </IconButton>
+              <Typography variant="body2">Upload Image</Typography>
+            </Box>
+            {editImagePreview && (
+              <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+                <img
+                  src={editImagePreview}
+                  alt="Preview"
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "200px",
+                    borderRadius: "8px",
+                  }}
+                />
+              </Box>
+            )}
+            <Button type="submit" variant="contained" color="primary" fullWidth>
+              Update Todo
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </Container>
   );
 };
 

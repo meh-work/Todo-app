@@ -2,11 +2,20 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import "../../styles/Profile.css";
+import {
+  Button,
+  TextField,
+  Avatar,
+  Container,
+  Typography,
+  Grid,
+  Box,
+} from "@mui/material";
 import {
   fetchUserProfile,
   userDashboardFrontendRoute,
 } from "../../routes/routes";
+import "../../styles/Profile.css";
 
 const Profile = () => {
   const token = useSelector((state) => state.auth.token);
@@ -26,7 +35,6 @@ const Profile = () => {
         setName(res.data.user.name);
         setEmail(res.data.user.email);
 
-        // Set image preview from API response if it exists
         if (res.data.user.image) {
           setImagePreview(`http://localhost:5000/${res.data.user.image}`);
         }
@@ -77,54 +85,107 @@ const Profile = () => {
   };
 
   return (
-    <div className="profile-container">
-      <button className="back-btn" onClick={() => navigate(-1)}>
+    <Container
+      maxWidth="sm"
+      sx={{ padding: 3, backgroundColor: "#f5f5f5", borderRadius: 3 }}
+    >
+      <Button
+        variant="outlined"
+        onClick={() => navigate(-1)}
+        sx={{ marginBottom: 2 }}
+      >
         ⬅ Back
-      </button>
-      <h2>Profile</h2>
+      </Button>
+      <Typography
+        variant="h4"
+        gutterBottom
+        sx={{ fontWeight: "bold", color: "#2c3e50" }}
+      >
+        Profile
+      </Typography>
       {user ? (
-        <div className="profile-content">
-          <img
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Avatar
+            sx={{
+              width: 120,
+              height: 120,
+              marginBottom: 2,
+              border: "3px solid #3498db",
+            }}
             src={imagePreview || "/default-avatar.png"}
             alt="Profile"
-            className="profile-pic"
           />
           {isEditing && (
-            <input type="file" accept="image/*" onChange={handleImageChange} />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              style={{ marginBottom: "16px" }}
+            />
           )}
-
           {isEditing ? (
             <>
-              <input
-                type="text"
+              <TextField
+                label="Name"
+                variant="outlined"
+                fullWidth
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Name"
+                sx={{ marginBottom: 2 }}
               />
-              <input
+              <TextField
+                label="Email"
+                variant="outlined"
+                fullWidth
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email"
+                sx={{ marginBottom: 2 }}
               />
-              <button onClick={handleUpdateProfile}>Save Changes</button>
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                onClick={handleUpdateProfile}
+                sx={{
+                  padding: "12px",
+                  fontWeight: "bold",
+                  backgroundColor: "#3498db",
+                }}
+              >
+                Save Changes
+              </Button>
             </>
           ) : (
             <>
-              <p>
+              <Typography variant="body1" sx={{ marginBottom: 1 }}>
                 <strong>Name:</strong> {user.name}
-              </p>
-              <p>
+              </Typography>
+              <Typography variant="body1" sx={{ marginBottom: 1 }}>
                 <strong>Email:</strong> {user.email}
-              </p>
-              <button onClick={() => setIsEditing(true)}>Edit Profile</button>
+              </Typography>
+              <Button
+                variant="outlined"
+                onClick={() => setIsEditing(true)}
+                sx={{ marginTop: 2, borderColor: "#3498db", color: "#3498db" }}
+              >
+                Edit Profile
+              </Button>
             </>
           )}
-        </div>
+        </Box>
       ) : (
-        <p>Loading profile...</p>
+        <Typography variant="body1" sx={{ color: "#888", marginTop: 3 }}>
+          Loading profile...
+        </Typography>
       )}
-    </div>
+    </Container>
   );
 };
 

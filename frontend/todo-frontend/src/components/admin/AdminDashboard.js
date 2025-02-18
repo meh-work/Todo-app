@@ -3,8 +3,26 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { fetchTodos } from "../../redux/actions/adminActions/todoActions";
 import { logout } from "../../redux/actions/adminActions/authActions";
-import "../../styles/AdminDashboard.css";
 import { userAssignTaskFrontendRoute } from "../../routes/routes";
+import {
+  Container,
+  Typography,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Card,
+  CardContent,
+  Modal,
+  Box,
+  IconButton,
+  Pagination,
+} from "@mui/material";
+import { Logout, AddTask, Close, Image } from "@mui/icons-material";
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
@@ -20,85 +38,135 @@ const AdminDashboard = () => {
   }, [page, token]);
 
   return (
-    <div className="dashboard-container">
-      <button
-        onClick={() => navigate(userAssignTaskFrontendRoute)}
-        className="assign-task-btn"
+    <Container maxWidth="lg" sx={{ mt: 4, textAlign: "center" }}>
+      {/* Top Buttons */}
+      <Box display="flex" justifyContent="space-between" mb={2}>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<AddTask />}
+          onClick={() => navigate(userAssignTaskFrontendRoute)}
+        >
+          Assign Task
+        </Button>
+        <Button
+          variant="contained"
+          color="error"
+          startIcon={<Logout />}
+          onClick={() => dispatch(logout(navigate))}
+        >
+          Logout
+        </Button>
+      </Box>
+
+      {/* Header */}
+      <Typography variant="h4" fontWeight="bold" mb={2} color="primary">
+        Admin Dashboard
+      </Typography>
+
+      {/* Task Table */}
+      <Card>
+        <CardContent>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead sx={{ backgroundColor: "#1976d2" }}>
+                <TableRow>
+                  <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                    Username
+                  </TableCell>
+                  <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                    Task
+                  </TableCell>
+                  <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                    Image
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {todos.length > 0 ? (
+                  todos.map((todo) => (
+                    <TableRow key={todo._id} hover>
+                      <TableCell>{todo.username || "Unknown"}</TableCell>
+                      <TableCell>{todo.task}</TableCell>
+                      <TableCell>
+                        {todo.image ? (
+                          <IconButton
+                            color="primary"
+                            onClick={() =>
+                              setSelectedImage(
+                                `http://localhost:5000${todo.image}`
+                              )
+                            }
+                          >
+                            <Image />
+                          </IconButton>
+                        ) : (
+                          "No Image"
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={3} align="center">
+                      No tasks available
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </CardContent>
+      </Card>
+
+      {/* Pagination */}
+      <Box mt={3} display="flex" justifyContent="center">
+        <Pagination
+          count={Math.ceil(totalResults / 10)}
+          page={page}
+          onChange={(e, value) => setPage(value)}
+          color="primary"
+        />
+      </Box>
+
+      {/* Image Preview Modal */}
+      <Modal
+        open={Boolean(selectedImage)}
+        onClose={() => setSelectedImage(null)}
       >
-        Assign Task
-      </button>
-      <button className="logout" onClick={() => dispatch(logout(navigate))}>
-        Logout
-      </button>
-      <h1 className="dashboard-header">Admin Dashboard</h1>
-
-      <table className="todo-table">
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Task</th>
-            <th>Image</th>
-          </tr>
-        </thead>
-        <tbody>
-          {todos.length > 0 ? (
-            todos.map((todo) => (
-              <tr key={todo._id}>
-                <td>{todo.username || "Unknown"}</td>
-                <td>{todo.task}</td>
-                <td>
-                  {todo.image ? (
-                    <button
-                      onClick={() =>
-                        setSelectedImage(`http://localhost:5000${todo.image}`)
-                      }
-                    >
-                      View Image
-                    </button>
-                  ) : (
-                    "No Image"
-                  )}
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="3">No tasks available</td>
-            </tr>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: "white",
+            p: 3,
+            borderRadius: 2,
+            textAlign: "center",
+            boxShadow: 24,
+          }}
+        >
+          {selectedImage && (
+            <img
+              src={selectedImage}
+              alt="Task Preview"
+              style={{ maxWidth: "100%" }}
+            />
           )}
-        </tbody>
-      </table>
-
-      <div className="pagination">
-        <button
-          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-          disabled={page === 1}
-        >
-          Previous
-        </button>
-        <span>
-          Page {page} of {Math.ceil(totalResults / 10)}
-        </span>
-        <button
-          onClick={() => setPage((prev) => prev + 1)}
-          disabled={page * 10 >= totalResults}
-        >
-          Next
-        </button>
-      </div>
-
-      {selectedImage && (
-        <div
-          className="image-preview-overlay"
-          onClick={() => setSelectedImage(null)}
-        >
-          <div className="image-preview">
-            <img src={selectedImage} alt="Task Preview" />
-            <button onClick={() => setSelectedImage(null)}>Close</button>
-          </div>
-        </div>
-      )}
-    </div>
+          <Box mt={2}>
+            <Button
+              variant="contained"
+              color="error"
+              startIcon={<Close />}
+              onClick={() => setSelectedImage(null)}
+            >
+              Close
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+    </Container>
   );
 };
 
