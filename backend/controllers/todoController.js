@@ -50,6 +50,8 @@ export const getTodosForAdmin = async (req, res) => {
 
 export const assignTask = async (req, res) => {
   try {
+    console.log("Assign task req body: ", req.body);
+
     const { userId, task } = req.body;
     const adminId = req.user.id;
 
@@ -57,12 +59,24 @@ export const assignTask = async (req, res) => {
     if (!userExists) {
       return res.status(404).json({ message: "User not found" });
     }
+    console.log("USer detail: ", userExists);
 
     const newTask = new todoModel({
       userId,
       task,
       assignedBy: adminId,
+      todoLogs: [
+        {
+          assignedTo: userId,
+          assignedBy: adminId,
+          taskBefore: null,
+          taskAfter: task,
+          changedAt: new Date(),
+        },
+      ],
     });
+
+    console.log("New task: ", newTask);
 
     await newTask.save();
 
@@ -87,8 +101,11 @@ export const getTodos = async (req, res) => {
 export const updateTodo = async (req, res) => {
   const { id } = req.params;
   const { task, isCompleted } = req.body;
+  const userId = req.user.id;
   const imagePath = req.file ? `uploads/${req.file.filename}` : null;
-  const result = await editTodos(id, task, isCompleted, imagePath);
+  const result = await editTodos(id, task, isCompleted, imagePath, userId);
+
+  console.log("Todo updated with logs: ", result);
 
   if (result.error) {
     return res.status(result.status).json({ message: result.error });

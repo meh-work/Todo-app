@@ -8,11 +8,13 @@ import { backendBaseUrl } from "./baseUrl";
 const adminLoginBackendRoute = "admin/login";
 const adminLogoutBackendRoute = "admin/logout";
 const adminDashboardBackendRoute = "/todos/admin";
+const assignTaskBackendRoute = "/todos/assign-task";
 const allUserProfileBackendRoute = "users/all-users";
 const userLoginBackendRoute = "/users/login";
 const userRegisterBackendRoute = "/users/register";
 const userLogoutBackendRoute = "/users/logout";
 const userDashboardBackendRoute = "/todos";
+const userAddTodoBackendRoute = "/todos";
 const userFetchUserProfileBackendRoute = "users/user-profile";
 
 // Frontend routes
@@ -64,6 +66,40 @@ export const adminFetchAllUser = async (token) => {
   }
 };
 
+export const assignTaskToUser = async (data, token) => {
+  console.log("Assign task data: ", data);
+  try {
+    const response = await apiRequestBackend(
+      "POST",
+      assignTaskBackendRoute,
+      data,
+      token
+    );
+    console.log("task assigned response: ", response);
+    return response;
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    throw error;
+  }
+};
+
+export const addTodoToTodoList = async (data, token) => {
+  try {
+    const response = await apiRequestBackend(
+      "POST",
+      userAddTodoBackendRoute,
+      token,
+      data
+    );
+    console.log("Add todo reponse: ", response);
+
+    return response;
+  } catch (error) {
+    console.error("Error adding todo:", error);
+    throw error;
+  }
+};
+
 export const userRegisterRoute = async (formData) => {
   const data = await apiRequestBackend(
     "POST",
@@ -91,8 +127,6 @@ export const userFetchTodosRoute = async (token) => {
     userDashboardBackendRoute,
     token
   );
-  console.log(`User todos: ${JSON.stringify(response)}`);
-
   return response;
 };
 

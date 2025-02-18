@@ -16,7 +16,7 @@ const router = express.Router();
 router.post("/", authMiddleware, imageUploader.single("image"), createTodo);
 router.get("/", authMiddleware, getTodos);
 router.get("/admin", authMiddleware, getTodosForAdmin);
-router.post("/assign", authMiddleware, assignTask);
+router.post("/assign-task", authMiddleware, assignTask);
 router.put("/:id", authMiddleware, imageChange.single("image"), updateTodo);
 router.delete("/:id", authMiddleware, deleteTodo);
 
