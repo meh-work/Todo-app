@@ -22,8 +22,6 @@ const Profile = () => {
     const fetchUser = async () => {
       try {
         const res = await fetchUserProfile(token);
-        console.log("User profile data: ", res.data);
-
         setUser(res.data.user);
         setName(res.data.user.name);
         setEmail(res.data.user.email);
@@ -56,8 +54,6 @@ const Profile = () => {
       formData.append("email", email);
       if (image) formData.append("image", image);
 
-      console.log("Update of formdata: ", formData);
-
       const res = await axios.post(
         "http://localhost:5000/api/users/user-profile",
         formData,
@@ -68,8 +64,6 @@ const Profile = () => {
           },
         }
       );
-
-      console.log("Updated image result: ", res.data);
 
       alert("Profile updated successfully!");
       setUser(res.data.user);

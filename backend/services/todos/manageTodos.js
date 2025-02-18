@@ -1,7 +1,6 @@
 import TodoModel from "../../models/TodoModel.js";
 
 export const addTodos = async (imagePath, userId, task) => {
-  console.log("todo  img: ", imagePath);
   try {
     const newTodo = new TodoModel({
       userId: userId,
@@ -16,18 +15,23 @@ export const addTodos = async (imagePath, userId, task) => {
 };
 
 export const editTodos = async (id, task, isCompleted, imagePath, userId) => {
-  const updateData = { task, isCompleted };
+  const data = { task, isCompleted };
   try {
     if (imagePath) {
-      updateData.image = imagePath;
+      data.image = imagePath;
     }
     const todo = await TodoModel.findById(id);
     if (!todo) return res.status(404).json({ message: "Todo not found" });
     const previousTask = todo.task;
+    const updateData = {
+      task,
+      isCompleted,
+      image: imagePath || todo.image,
+    };
     // Update task
-    todo.task = task;
-    todo.isCompleted = isCompleted;
-    todo.image = imagePath;
+    todo.task = updateData.task;
+    todo.isCompleted = updateData.isCompleted;
+    todo.image = updateData.image;
     // Add to todoLogs
     todo.todoLogs.push({
       assignedTo: todo.userId,

@@ -23,8 +23,6 @@ export const userTodoReducer = (data) => {
 export const userViewProfile = (token, navigate) => async (dispatch) => {
   try {
     const response = await fetchUserProfile(token);
-    console.log("USer profile: ", response);
-
     dispatch(userViewProfileReducer(response.data));
     navigate(userViewProfileFrontendRoute);
   } catch (error) {

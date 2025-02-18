@@ -46,7 +46,6 @@ export const logout = async (req, res) => {
 export const getUser = async (req, res) => {
   const token =
     req.headers.authorization && req.headers.authorization.split(" ")[1];
-  console.log("Get Users token: ", token);
 
   const result = await getUserProfile(token);
 
@@ -70,13 +69,8 @@ export const getAllUsers = async (req, res) => {
 export const updateUserProfile = async (req, res) => {
   const token =
     req.headers.authorization && req.headers.authorization.split(" ")[1];
-  console.log("Get Users token: ", token);
   const { name, email } = req.body;
   const imagePath = req.file ? `uploads/profile/${req.file.filename}` : null;
-
-  console.log("imgPath: ", req.file);
-  console.log("Update user data: ", req.body);
-
   const result = await updateUserData(token, { name, email }, imagePath);
 
   if (result.error) {

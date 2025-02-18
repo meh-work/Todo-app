@@ -120,8 +120,6 @@ export const getUserProfile = async (token) => {
     }
 
     const user = await User.findOne({ token });
-    console.log("Get user profile user: ", user);
-
     return { status: 200, user: user };
   } catch (error) {
     return { error: error.message, status: 500 };
@@ -134,7 +132,6 @@ export const getAllUserProfiles = async (token) => {
       return { error: "No token provided.", status: 401 };
     }
     const users = await User.find();
-    console.log("All Users: ", users);
     return { status: 200, users: users };
   } catch (error) {
     return { error: error.message, status: 500 };
@@ -142,10 +139,7 @@ export const getAllUserProfiles = async (token) => {
 };
 
 export const updateUserData = async (token, data, imgPath) => {
-  console.log("Updates of user data: ", data);
-  console.log("Image: ", imgPath);
   const { name, email } = data;
-  console.log(`Name: ${name} Email: ${email}`);
   try {
     if (!token) {
       return { error: "No token provided.", status: 401 };
@@ -157,8 +151,6 @@ export const updateUserData = async (token, data, imgPath) => {
       email: email,
       image: imgPath,
     });
-
-    console.log("User Data updated: ", updateUserData);
 
     return {
       message: "User Data Updated Successfully!",

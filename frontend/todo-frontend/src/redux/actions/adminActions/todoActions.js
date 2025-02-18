@@ -32,7 +32,6 @@ export const fetchUsers = (token) => async (dispatch) => {
     }
     dispatch({ type: "FETCH_USERS_REQUEST" });
     const response = await adminFetchAllUser(token);
-    console.log("FetchUSers respo: ", response);
 
     dispatch({
       type: "FETCH_USERS_SUCCESS",
@@ -73,7 +72,6 @@ export const assignTask =
       }
       const data = { userId, task };
       const response = await assignTaskToUser(data, token);
-      console.log("Assign task response.");
 
       dispatch({
         type: "ASSIGN_TASK_SUCCESS",

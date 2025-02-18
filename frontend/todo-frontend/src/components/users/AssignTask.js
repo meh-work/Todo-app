@@ -23,7 +23,6 @@ const AssignTask = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (selectedUser && task) {
-      console.log("Task assigned to:", selectedUser, "Task:", task);
       dispatch(assignTask(selectedUser, task, token, navigate));
     }
   };

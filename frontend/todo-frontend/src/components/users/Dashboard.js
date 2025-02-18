@@ -71,11 +71,11 @@ const Dashboard = () => {
     }
   };
 
-  const handleUpdateTodo = async (id, task, isCompleted) => {
+  const handleUpdateTodo = async (id, task, isCompleted, image) => {
     try {
       await axios.put(
         `http://localhost:5000/api/todos/${id}`,
-        { task, isCompleted: !isCompleted },
+        { task, isCompleted: !isCompleted, image },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -138,7 +138,12 @@ const Dashboard = () => {
                       type="checkbox"
                       checked={todo.isCompleted}
                       onChange={() =>
-                        handleUpdateTodo(todo._id, todo.task, todo.isCompleted)
+                        handleUpdateTodo(
+                          todo._id,
+                          todo.task,
+                          todo.isCompleted,
+                          todo.image
+                        )
                       }
                     />
                   </td>

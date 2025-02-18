@@ -46,10 +46,9 @@ export const adminFetchTodosRoute = async (page, token) => {
     `${adminDashboardBackendRoute}?page=${page}&limit=5`,
     token
   );
-  console.log("admin response: ", response);
-
   return response;
 };
+
 export const adminFetchAllUser = async (token) => {
   try {
     const response = await apiRequestBackend(
@@ -57,7 +56,6 @@ export const adminFetchAllUser = async (token) => {
       allUserProfileBackendRoute,
       token
     );
-    console.log("Adminfetchalluser response: ", response);
 
     return response;
   } catch (error) {
@@ -67,7 +65,6 @@ export const adminFetchAllUser = async (token) => {
 };
 
 export const assignTaskToUser = async (data, token) => {
-  console.log("Assign task data: ", data);
   try {
     const response = await apiRequestBackend(
       "POST",
@@ -75,7 +72,6 @@ export const assignTaskToUser = async (data, token) => {
       data,
       token
     );
-    console.log("task assigned response: ", response);
     return response;
   } catch (error) {
     console.error("Error fetching users:", error);
@@ -91,7 +87,6 @@ export const addTodoToTodoList = async (data, token) => {
       token,
       data
     );
-    console.log("Add todo reponse: ", response);
 
     return response;
   } catch (error) {
@@ -111,13 +106,11 @@ export const userRegisterRoute = async (formData) => {
 
 export const userLoginRoute = async (formData) => {
   const data = await apiRequestBackend("POST", userLoginBackendRoute, formData);
-  console.log(`Api data: ${JSON.stringify(data)}`);
   return data;
 };
 
 export const userLogoutRoute = async (token) => {
   const data = await apiRequestBackend("POST", userLogoutBackendRoute, token);
-  console.log(`Logout data: ${JSON.stringify(data)}`);
   return data;
 };
 
@@ -136,8 +129,5 @@ export const fetchUserProfile = async (token) => {
     userFetchUserProfileBackendRoute,
     token
   );
-
-  console.log("fetchUserProfile: ", response.data);
-
   return response;
 };

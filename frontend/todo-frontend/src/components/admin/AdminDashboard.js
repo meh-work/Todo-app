@@ -17,7 +17,6 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     dispatch(fetchTodos(page, token));
-    console.log("Fetched todos for admin: ", todos);
   }, [page, token]);
 
   return (
