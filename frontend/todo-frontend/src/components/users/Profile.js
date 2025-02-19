@@ -8,7 +8,6 @@ import {
   Avatar,
   Container,
   Typography,
-  Grid,
   Box,
 } from "@mui/material";
 import {

@@ -35,7 +35,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     dispatch(fetchTodos(page, token));
-  }, [page, token]);
+  }, [page, token, dispatch]);
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, textAlign: "center" }}>
