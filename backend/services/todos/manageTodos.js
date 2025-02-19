@@ -48,15 +48,22 @@ export const editTodos = async (id, task, isCompleted, imagePath, userId) => {
   }
 };
 
-export const fetchUserTodos = async (userId) => {
+export const fetchUserTodos = async (userId, skip, limit) => {
   try {
     const todos = await TodoModel.find({ userId: userId, isDeleted: false })
-      .populate("assignedBy", "name email")
-      .populate("todoLogs.assignedBy", "name")
-      .populate("todoLogs.assignedTo", "name");
+      .populate("assignedBy", "userType")
+      .populate("todoLogs.assignedBy", "adminname")
+      .populate("todoLogs.assignedTo", "username")
+      .skip(skip)
+      .limit(Number(limit));
     if (!todos.length === 0) return { error: "Todos not found.", status: 200 };
 
-    return { todos, status: 200 };
+    const total = await TodoModel.countDocuments({
+      task: { $ne: "undefined" },
+    });
+    console.log("USer todos: ", todos);
+
+    return { todos, total, status: 200 };
   } catch (error) {
     return { error: error.message, status: 500 };
   }

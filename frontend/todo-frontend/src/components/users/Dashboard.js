@@ -14,7 +14,6 @@ import {
   Button,
   Container,
   TextField,
-  Checkbox,
   IconButton,
   Table,
   TableBody,
@@ -28,6 +27,9 @@ import {
   Box,
   Modal,
   Fade,
+  Select,
+  MenuItem,
+  Pagination,
 } from "@mui/material";
 import {
   Delete,
@@ -40,18 +42,22 @@ import {
 const Dashboard = () => {
   const [newTask, setNewTask] = useState("");
   const [image, setImage] = useState(null);
+  const [page, setPage] = useState(1);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [filter, setFilter] = useState([]);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const totalResults = useSelector((state) => state.userTodos.totalUserResults);
   const token = useSelector((state) => state.auth.token);
   const userTodos =
     useSelector((state) => state.userTodos.userTodos.todos) || [];
 
   useEffect(() => {
-    dispatch(userFetchTodos(token));
-  }, [token, dispatch]);
+    console.log("Total result: ", totalResults);
+    dispatch(userFetchTodos(page, token));
+  }, [page, token, dispatch]);
 
   const handleAddTodo = async () => {
     try {
@@ -73,16 +79,6 @@ const Dashboard = () => {
     } catch (error) {
       console.error("Error adding todo:", error);
       alert("Error adding todo");
-    }
-  };
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setImage(file);
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setImagePreview(reader.result);
-      reader.readAsDataURL(file);
     }
   };
 
@@ -113,6 +109,17 @@ const Dashboard = () => {
       alert("Error updating todo");
     }
   };
+
+  const filteredTodos = userTodos.filter((todo) => {
+    if (filter.includes("completed") && !todo.isCompleted) return false;
+    if (filter.includes("withImages") && !todo.image) return false;
+    if (
+      filter.includes("assignedByAdmin") &&
+      (!todo.assignedBy || todo.assignedBy.userType !== "Admin")
+    )
+      return false;
+    return true;
+  });
 
   return (
     <Container>
@@ -149,7 +156,7 @@ const Dashboard = () => {
         <input
           type="file"
           accept="image/*"
-          onChange={handleImageChange}
+          onChange={(e) => setImage(e.target.files[0])}
           style={{ marginBottom: "10px" }}
         />
         {imagePreview && (
@@ -158,6 +165,24 @@ const Dashboard = () => {
         <Button variant="contained" onClick={handleAddTodo}>
           Add Task
         </Button>
+      </Box>
+
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="subtitle1">Filter Tasks:</Typography>
+        <Select
+          multiple
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          fullWidth
+          displayEmpty
+        >
+          <MenuItem value="" disabled>
+            Select filters
+          </MenuItem>
+          <MenuItem value="completed">Show Completed</MenuItem>
+          <MenuItem value="withImages">Show With Images</MenuItem>
+          <MenuItem value="assignedByAdmin">Show Assigned by Admin</MenuItem>
+        </Select>
       </Box>
 
       <TableContainer component={Paper} sx={{ maxHeight: 400 }}>
@@ -171,13 +196,12 @@ const Dashboard = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {userTodos.map((todo) => (
+            {filteredTodos.map((todo) => (
               <TableRow key={todo._id}>
                 <TableCell>{todo.task}</TableCell>
                 <TableCell>
-                  <Checkbox
-                    checked={todo.isCompleted}
-                    onChange={() =>
+                  <IconButton
+                    onClick={() =>
                       handleUpdateTodo(
                         todo._id,
                         todo.task,
@@ -185,7 +209,9 @@ const Dashboard = () => {
                         todo.image
                       )
                     }
-                  />
+                  >
+                    {todo.isCompleted ? "✅" : "⭕"}
+                  </IconButton>
                 </TableCell>
                 <TableCell>
                   {todo.image ? (
@@ -225,6 +251,16 @@ const Dashboard = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* Pagination */}
+      <Box mt={3} display="flex" justifyContent="center">
+        <Pagination
+          count={Math.ceil(totalResults / 10)}
+          page={page}
+          onChange={(e, value) => setPage(value)}
+          color="primary"
+        />
+      </Box>
 
       <Modal
         open={Boolean(selectedImage)}

@@ -84,13 +84,17 @@ export const assignTask = async (req, res) => {
 };
 
 export const getTodos = async (req, res) => {
-  const userId = req.user.id;
-  const result = await fetchUserTodos(userId);
+  try {
+    const { page = 1, limit = 5 } = req.query;
+    const skip = (page - 1) * limit;
+    const userId = req.user.id;
+    const result = await fetchUserTodos(userId, skip, limit);
 
-  if (result.error) {
-    return res.status(result.status).json({ message: result.error });
-  }
-  res.status(result.status).json({ todos: result.todos });
+    if (result.error) {
+      return res.status(result.status).json({ message: result.error });
+    }
+    res.status(result.status).json({ todos: result.todos });
+  } catch (error) {}
 };
 
 export const updateTodo = async (req, res) => {

@@ -4,9 +4,9 @@ import {
   userViewProfileFrontendRoute,
 } from "../../../routes/routes";
 
-export const userFetchTodos = (token) => async (dispatch) => {
+export const userFetchTodos = (page, token) => async (dispatch) => {
   try {
-    const response = await userFetchTodosRoute(token);
+    const response = await userFetchTodosRoute(page, token);
     dispatch(userTodoReducer(response));
   } catch (error) {
     dispatch({ type: "FETCH_USER_TODOS_FAILURE" });
@@ -14,6 +14,7 @@ export const userFetchTodos = (token) => async (dispatch) => {
 };
 
 export const userTodoReducer = (data) => {
+  console.log("User todo reducer data: ", data);
   return {
     type: "FETCH_USER_TODOS_SUCCESS",
     payload: data,

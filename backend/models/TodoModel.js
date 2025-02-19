@@ -11,11 +11,11 @@ const TodoSchema = new mongoose.Schema(
     isCompleted: { type: Boolean, default: false },
     image: { type: String },
     isDeleted: { type: Boolean, default: false },
-    assignedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Added field
+    assignedBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin" }, // Added field
     todoLogs: [
       {
         assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-        assignedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        assignedBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin" },
         taskBefore: { type: String },
         taskAfter: { type: String },
         changedAt: { type: Date, default: Date.now },

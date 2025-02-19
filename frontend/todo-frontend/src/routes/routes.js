@@ -72,6 +72,8 @@ export const assignTaskToUser = async (data, token) => {
       data,
       token
     );
+    console.log("Task assign response: ", response);
+
     return response;
   } catch (error) {
     console.error("Error fetching users:", error);
@@ -114,12 +116,14 @@ export const userLogoutRoute = async (token) => {
   return data;
 };
 
-export const userFetchTodosRoute = async (token) => {
+export const userFetchTodosRoute = async (page, token) => {
   const response = await apiRequestBackend(
     "GET",
-    userDashboardBackendRoute,
+    `${userDashboardBackendRoute}?page=${page}&limit=5`,
     token
   );
+  console.log("userFetchTodos: ", response);
+
   return response;
 };
 

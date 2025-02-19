@@ -21,6 +21,8 @@ import {
   Box,
   IconButton,
   Pagination,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { Logout, AddTask, Close, Image } from "@mui/icons-material";
 
@@ -29,6 +31,7 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [filter, setFilter] = useState([]);
   const todos = useSelector((state) => state.todos.todos);
   const totalResults = useSelector((state) => state.todos.totalResults);
   const token = useSelector((state) => state.auth.token);
@@ -36,6 +39,14 @@ const AdminDashboard = () => {
   useEffect(() => {
     dispatch(fetchTodos(page, token));
   }, [page, token, dispatch]);
+
+  console.log("Admin todos: ", todos);
+  const filteredTodos = todos.filter((todo) => {
+    if (filter.includes("completed") && !todo.isCompleted) return false;
+    if (filter.includes("deleted") && !todo.isDeleted) return false;
+    if (filter.includes("withImages") && !todo.image) return false;
+    return true;
+  });
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, textAlign: "center" }}>
@@ -64,6 +75,24 @@ const AdminDashboard = () => {
         Admin Dashboard
       </Typography>
 
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="subtitle1">Filter Tasks:</Typography>
+        <Select
+          multiple
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          fullWidth
+          displayEmpty
+        >
+          <MenuItem value="" disabled>
+            Select filters
+          </MenuItem>
+          <MenuItem value="completed">Show Completed</MenuItem>
+          <MenuItem value="withImages">Show With Images</MenuItem>
+          <MenuItem value="deleted">Show deleted todos</MenuItem>
+        </Select>
+      </Box>
+
       {/* Task Table */}
       <Card>
         <CardContent>
@@ -83,8 +112,8 @@ const AdminDashboard = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {todos.length > 0 ? (
-                  todos.map((todo) => (
+                {filteredTodos.length > 0 ? (
+                  filteredTodos.map((todo) => (
                     <TableRow key={todo._id} hover>
                       <TableCell>{todo.username || "Unknown"}</TableCell>
                       <TableCell>{todo.task}</TableCell>

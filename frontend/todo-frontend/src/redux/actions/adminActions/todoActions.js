@@ -19,6 +19,8 @@ export const fetchTodos = (page, token) => async (dispatch) => {
 };
 
 export const todoReducer = (data) => {
+  console.log("TodoReducer Data: ", data);
+
   return {
     type: "FETCH_TODOS_SUCCESS",
     payload: data,
